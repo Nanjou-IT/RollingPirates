@@ -4,12 +4,12 @@
     android:layout_height="match_parent" >
   
     <TextView android:text="@string/begin"
-	android:layout_gravity="center"
+	android:layout_gravity="center_vertical"
 	android:id="@+id/begin"
 	style="@style/MenuFont"/>
     
     <TextView android:text="@string/settings"
-	android:layout_gravity="center"
+	android:layout_gravity="center_horizontal"
 	android:id="@+id/settings"
 	style="@style/MenuFont"/>
 	
