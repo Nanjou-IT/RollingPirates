@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+  
+    <TextView android:text="@string/begin"
+	android:layout_gravity="center"
+	android:id="@+id/begin"
+	style="@style/MenuFont"/>
+    
+    <TextView android:text="@string/settings"
+	android:layout_gravity="center"
+	android:id="@+id/settings"
+	style="@style/MenuFont"/>
+	
+    <TextView android:text="@string/help"
+	android:layout_gravity="center"
+	android:id="@+id/help"
+	style="@style/MenuFont"/>
+    
+    
+    <TextView android:text="@string/about"
+	android:layout_gravity="center"
+	android:id="@+id/about"
+	style="@style/MenuFont"/>
+    
+    <TextView android:text="@string/exit"
+	android:layout_gravity="center"
+	android:id="@+id/exit"
+	style="@style/MenuFont"/>
+
+</TableLayout>
