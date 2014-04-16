@@ -6,43 +6,34 @@
     android:orientation="vertical" >
   
     <TextView
-        android:id="@+id/begin"
+        android:id="@+id/sound"
         style="@style/MenuFont"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/begin" />
+        android:text="@string/sound" />
     
     <TextView
-        android:id="@+id/settings"
+        android:id="@+id/effects"
         style="@style/MenuFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/settings" />
-	
-    <TextView
-        android:id="@+id/help"
+        android:text="@string/effect" />
+     <TextView
+        android:id="@+id/music"
         style="@style/MenuFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/help" />
+        android:text="@string/music" />
+      <TextView
+        android:id="@+id/vibrate"
+        style="@style/MenuFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/vibrate" />
     
-    <TextView
-        android:id="@+id/about"
-        style="@style/MenuFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/about" />
-
-    <TextView
-        android:id="@+id/exit"
-        style="@style/MenuFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/exit" />
 
 </LinearLayout>

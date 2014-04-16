@@ -5,10 +5,11 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MenuFragment extends Fragment{
@@ -16,26 +17,83 @@ public class MenuFragment extends Fragment{
 	
 	}
 	public static MenuFragment createMainMenu() {
-		return new MenuFragment(); 
+		MenuFragment mf = new MenuFragment();
+		Bundle bundleMenu = new Bundle();
+		bundleMenu.putString("position", "main");
+		mf.setArguments(bundleMenu);
+		return mf; 
+	}
+	public static MenuFragment createSettingMenu() {
+		MenuFragment mf = new MenuFragment();
+		Bundle bundleMenu = new Bundle();
+		bundleMenu.putString("position", "setting");
+		mf.setArguments(bundleMenu);
+		return mf; 
+	}
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		
+		super.onCreate(savedInstanceState);
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+			
+		View v = super.onCreateView(inflater, container, savedInstanceState);
+		Bundle menuBundle = getArguments();
 		
-		super.onCreateView(inflater, container, savedInstanceState);
-		View v = inflater.inflate(R.layout.mainmenu_layout, container);
-		ViewGroup parentView = (ViewGroup) v.getParent();
-		
-		//int count = parentView.getChildCount();
-		
-//		Log.d("DEBUG",Integer.toString(count));
-		TextView tv = (TextView) v.findViewById(R.id.begin);
-		Context c = (Context) getActivity();
-		AssetManager am = c.getAssets();
-		Typeface mainMenu_tf = Typeface.createFromAsset(am, "fonts/oj.ttf");
-		tv.setTypeface(mainMenu_tf);
+		String position = menuBundle.getString("position");
+	
+		if("main".equals(position)){
+			v = inflater.inflate(R.layout.mainmenu_layout, null);
+			setFontToTextViews(v, getActivity());
+		}
+		else if (position.equals("settings")) {
+			v = inflater.inflate(R.layout.settings_layout, null);
+			setFontToTextViews(v, getActivity());
+		}
 		return v;
+		
+		
 	}
-
+	/*
+	 * sets Font of text Views on the menu with a font from the assets folder
+	 */
+	public static void setFontToTextViews(View view, Context c){ 
+		 LinearLayout theLayout = (LinearLayout) view.findViewById(R.id.thelayout);
+		int count = theLayout.getChildCount();
+		
+		for(int i = 0 ; i < count; i++) {
+	
+			View tmpView = theLayout.getChildAt(i);		
+			if (tmpView instanceof TextView) {
+				TextView tv = (TextView) tmpView;
+				AssetManager am = c.getAssets();
+				Typeface mainMenu_tf = Typeface.createFromAsset(am, "fonts/oj.ttf");
+				tv.setTypeface(mainMenu_tf);
+			
+			}
+		}
+	}
+	
+	public static void setTextViewListener(View view, Context c) {
+		 LinearLayout theLayout = (LinearLayout) view.findViewById(R.id.thelayout);
+		int count = theLayout.getChildCount();
+		
+		for(int i = 0 ; i < count; i++) {
+	
+			View tmpView = theLayout.getChildAt(i);		
+			if (tmpView instanceof TextView) {
+				TextView tv = (TextView) tmpView;
+				tv.setOnClickListener( new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						
+					}
+				});
+			
+			}
+		}
+	}
 }

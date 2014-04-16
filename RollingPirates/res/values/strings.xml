@@ -9,4 +9,8 @@
     <string name="help">Help</string>
     <string name="about">About</string>
 	<string name="exit">Exit</string>
+	<string name="sound">Sound</string>
+	<string name="effect">Effect</string>
+	<string name="music">Music</string>
+	<string name="vibrate">Vibrate</string>
 </resources>
