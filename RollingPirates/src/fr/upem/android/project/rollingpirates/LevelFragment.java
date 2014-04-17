@@ -4,15 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import android.app.Fragment;
-import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 
 public class LevelFragment extends Fragment {
 	
@@ -57,6 +57,11 @@ public class LevelFragment extends Fragment {
 			// TODO Auto-generated catch block
 		}
 
+		RelativeLayout viewContainer = (RelativeLayout) v.findViewById(R.id.levelContainer);
+		
+		View levelView = new LevelView(getActivity());
+		levelView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+		viewContainer.addView(levelView);
 		
 		return v;
 	}

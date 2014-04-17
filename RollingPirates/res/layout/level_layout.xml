@@ -6,9 +6,9 @@
     android:orientation="vertical"
     tools:context=".LoadLevelActivity" >
 
-    <fr.upem.android.project.rollingpirates.LevelView
-        android:id="@+id/graphicsview"
-        android:layout_width="match_parent"
-        android:layout_height="0dp" />
+<!--     <fr.upem.android.project.rollingpirates.LevelView -->
+<!--         android:id="@+id/graphicsview" -->
+<!--         android:layout_width="match_parent" -->
+<!--         android:layout_height="0dp" /> -->
 
 </RelativeLayout>
