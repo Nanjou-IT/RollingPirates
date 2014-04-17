@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 public class MenuFragment extends Fragment{
 	public MenuFragment() {
-	
 	}
 	
 	public static MenuFragment createMainMenu() {

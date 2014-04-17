@@ -23,6 +23,13 @@ public class MainActivity extends Activity {
         	        transaction.replace(android.R.id.content, settingMenu);
         	        transaction.commit();
         	}
+        	if(i.getStringExtra("selectedItem").equals("Help")){
+        		
+        	}
+        	if(i.getStringExtra("selectedItem").equals("About")){
+        		
+        	}
+        	
         }
         
     	/*newGame.setOnClickListener(new OnClickListener() {
