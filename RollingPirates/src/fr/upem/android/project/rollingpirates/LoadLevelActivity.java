@@ -6,13 +6,14 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.util.Log;
 
 public class LoadLevelActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        Log.d("DEBUG", "activitylevel");
         // TODO : Receive the game level as an integer !
         int gameLevel = 0;
         

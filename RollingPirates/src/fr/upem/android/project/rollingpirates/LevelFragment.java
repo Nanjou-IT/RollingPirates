@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 
 public class LevelFragment extends Fragment {
@@ -53,6 +52,7 @@ public class LevelFragment extends Fragment {
 
 			String text = new String(buffer);
 			Log.d("DEBUG", "Data : " + text);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 		}
@@ -65,5 +65,4 @@ public class LevelFragment extends Fragment {
 		
 		return v;
 	}
-
 }
