@@ -6,12 +6,9 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.util.Log;
 
 public class LoadLevelActivity extends Activity {
-	
-	private final static String TAG = "LoadLevel";
-	
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,13 +22,11 @@ public class LoadLevelActivity extends Activity {
         try {
 			levelList = assets.list("levels");
 		} catch (IOException e) {
-			Log.e(TAG, "Error : No folder 'assets/levels' was founded.");
+			// TODO : Handle exception
 		}
         
-        if (levelList != null && levelList.length != 0) {
-        	if (levelList.length < gameLevel) {
-        		gameLevel = levelList.length-1; // No more levels, select the last one
-        	}
+        
+        if (levelList != null && levelList.length >= gameLevel) {
         	// OK
         	FragmentTransaction transaction = getFragmentManager().beginTransaction();
     		LevelFragment level = LevelFragment.createLevel(levelList[gameLevel]);
@@ -39,7 +34,7 @@ public class LoadLevelActivity extends Activity {
     		transaction.commit();
         } else {
         	// NOK
-        	Log.e(TAG, "Error : No ASCII level loaded into assets/levels folder.");
+        	// TODO : Error no ASCII file level 
         }
     }
 }

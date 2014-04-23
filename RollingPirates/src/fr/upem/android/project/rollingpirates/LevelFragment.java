@@ -16,8 +16,6 @@ import android.widget.RelativeLayout;
 
 public class LevelFragment extends Fragment {
 	
-	private final static String TAG = "LevelFragment";
-	
 	public LevelFragment() {
 		// empty
 	}
@@ -28,7 +26,6 @@ public class LevelFragment extends Fragment {
 		Bundle bundle = new Bundle();
 		bundle.putString("level", gameLevel);
 		levelFragment.setArguments(bundle);
-		
 		return levelFragment;
 	}
 	
@@ -45,23 +42,20 @@ public class LevelFragment extends Fragment {
 		/*
 		 * Parse text and generate the LevelView 
 		 */
-		byte[] buffer = null;
+		InputStream input;
 		try {
 			AssetManager assetManager = getActivity().getAssets();
-			InputStream input = assetManager.open("levels/" + gameLevel);
+			input = assetManager.open("levels/" + gameLevel);
 			int size = input.available();
-			buffer = new byte[size];
+			byte[] buffer = new byte[size];
 			input.read(buffer);
 			input.close();
 
 			String text = new String(buffer);
 			Log.d("DEBUG", "Data : " + text);
 		} catch (IOException e) {
-			Log.e(TAG, "Error : 'assets/levels/" + gameLevel +"' cannot be open/read/close.");
+			// TODO Auto-generated catch block
 		}
-		
-		// TODO : Create a Model and fill it with @buffer or @text
-		GameShapeModel model = GameShapeModel.init(buffer);
 
 		RelativeLayout viewContainer = (RelativeLayout) v.findViewById(R.id.levelContainer);
 		
