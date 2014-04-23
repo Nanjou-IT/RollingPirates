@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 
-	private final Paint paint; 
+	private final Paint paint;
 	private SurfaceHolder holder;
 	
 	// TODO : Use MVC over SurfaceView
@@ -22,6 +22,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		paint = new Paint();
 		holder = getHolder(); // TODO : Look at the doc & Use this shit
 		holder.addCallback(this);
+		setFocusable(true);
 	}
 	
 	@Override
