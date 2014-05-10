@@ -16,6 +16,8 @@ import android.widget.RelativeLayout;
 
 public class LevelFragment extends Fragment {
 	
+	private final static String TAG = "LevelFragment";
+	
 	public LevelFragment() {
 		// empty
 	}
@@ -26,6 +28,7 @@ public class LevelFragment extends Fragment {
 		Bundle bundle = new Bundle();
 		bundle.putString("level", gameLevel);
 		levelFragment.setArguments(bundle);
+		
 		return levelFragment;
 	}
 	
@@ -42,26 +45,26 @@ public class LevelFragment extends Fragment {
 		/*
 		 * Parse text and generate the LevelView 
 		 */
-		InputStream input;
+		byte[] buffer = null;
 		try {
 			AssetManager assetManager = getActivity().getAssets();
-			input = assetManager.open("levels/" + gameLevel);
+			InputStream input = assetManager.open("levels/" + gameLevel);
 			int size = input.available();
-			byte[] buffer = new byte[size];
+			buffer = new byte[size];
 			input.read(buffer);
 			input.close();
-
-			String text = new String(buffer);
-			Log.d("DEBUG", "Data : " + text);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			Log.e(TAG, "Error : 'assets/levels/" + gameLevel +"' cannot be open/read/close.");
 		}
-
-		RelativeLayout viewContainer = (RelativeLayout) v.findViewById(R.id.levelContainer);
 		
-		View levelView = new LevelView(getActivity());
-		levelView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+		// Verify and format the arena world
+		char[][] grid = GamePlateModel.check(buffer);
+		
+		RelativeLayout viewContainer = (RelativeLayout) v.findViewById(R.id.levelContainer);
+		View levelView = new LevelView(getActivity(), grid);
+		levelView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.FILL_PARENT));
 		viewContainer.addView(levelView);
+		
 		
 		return v;
 	}
