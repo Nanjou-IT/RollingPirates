@@ -29,12 +29,13 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		paint.setColor(Color.BLUE);
 		holder = getHolder(); // TODO : Look at the doc & Use this shit
 		holder.addCallback(this);
+//		getHolder().setFixedSize(1848, 810);
 		setFocusable(true);
 	}
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		Toast.makeText(getContext(), "Surface view is loaded -> height=" + getHeight()/9 + "  width=" + getWidth()/28, Toast.LENGTH_LONG).show();
+//		Toast.makeText(getContext(), "Surface view is loaded -> height=" + getHeight()/9 + "  width=" + getWidth()/28, Toast.LENGTH_LONG).show();
 		return true;
 	}
 
@@ -48,17 +49,10 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 
 		GamePlateModel model = GamePlateModel.init(grid, surfaceFrame.width(), surfaceFrame.height());
 		
-//		
         c.drawARGB(255, 255, 255, 255);
-//        c.drawText("Surface View is inda place", 200, 200, redPaint);
-//        c.drawCircle(100, 100, 30, redPaint);
-//        c.drawRect(100, 200, 168, 298, redPaint);
-        
 
 		int i = 0;
-		
 		ArrayList<Plate> vplates = model.getVPlates();
-		i = 0;
 		for (Plate p : vplates) {
 			i += 1;
 			Log.d("LevelView", "Plate n°" + p.lineOrRow + "   i = " + i);
@@ -69,6 +63,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 			}
 		}
 		
+		i = 0;
 		paint.setColor(Color.RED);
 		ArrayList<Plate> hplates = model.getHPlates();
 		for (Plate p : hplates) {
@@ -80,8 +75,6 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 				c.drawRect(o.getX(), o.getY(), o.getX() + o.getWidth(), o.getY() + o.getHeight(), paint);
 			}
 		}
-		
-		
 		
         holder.unlockCanvasAndPost(c);
 	}

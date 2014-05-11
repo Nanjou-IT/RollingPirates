@@ -1,31 +1,31 @@
 package fr.upem.android.project.rollingpirates;
 
 public class Obstacle {
-	private final int width;
-	private final int height;
-	private final int x; // point at left
-	private final int y; // point at top
+	private final float width;
+	private final float height;
+	private final float x; // point at left
+	private final float y; // point at top
 
-	public Obstacle(int width, int height, int x, int y) {
+	public Obstacle(float width, float height, float x, float y) {
 		this.width = width;
 		this.height = height;
 		this.x = x;
 		this.y = y;
 	}
 	
-	public int getWidth() {
+	public float getWidth() {
 		return width;
 	}
 
-	public int getHeight() {
+	public float getHeight() {
 		return height;
 	}
 
-	public int getX() {
+	public float getX() {
 		return x;
 	}
 
-	public int getY() {
+	public float getY() {
 		return y;
 	}
 }

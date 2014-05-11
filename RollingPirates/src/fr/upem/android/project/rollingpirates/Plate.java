@@ -4,19 +4,31 @@ import java.util.ArrayList;
 
 enum Gravity { LEFT, TOP, RIGHT, DOWN, ALL; }
 
+enum Orientation { Horizontal, Vertical; }
+
 public class Plate {
 	private final ArrayList<Obstacle> obstacles;
-	private final Gravity orientation;
+	private final Gravity g;
 	final int lineOrRow;
+	private final Orientation o;
 	
-	public Plate(ArrayList<Obstacle> obstacles, Gravity direction, int lineRowNumber) {
+	public Plate(ArrayList<Obstacle> obstacles, Gravity direction, int lineRowNumber, Orientation orientation) {
 		this.obstacles = obstacles;
-		orientation = direction;
+		g = direction;
 		lineOrRow = lineRowNumber + 1;
+		o = orientation;
 	}
 	
 	public ArrayList<Obstacle> getObstacles() {
 		return obstacles;
+	}
+	
+	public boolean isHorizontal() {
+		return o.ordinal() == 0;
+	}
+	
+	public Gravity getGravity() {
+		return g;
 	}
 	
 	@Override

@@ -18,8 +18,11 @@ public class GamePlateModel {
 	private final int CELL_WIDTH;
 	private final int CELL_HEIGHT;
 	
-	private final double widthRatio; 
-	private final double heightRatio;
+	private final float accurateWidthRatio; 
+	private final float accurateHeightRatio;
+	
+	private final int widthRatio; 
+	private final int heightRatio;
 	
 	private ArrayList<Plate> hplates;
 	private ArrayList<Plate> vplates;
@@ -34,14 +37,17 @@ public class GamePlateModel {
 		CELL_WIDTH = cellWidth;
 		CELL_HEIGHT = cellHeight;
 		
-		int cellHNumber = surfaceWidth / cellWidth;
-		int cellVNumber = surfaceHeight / cellHeight;
+		float cellHNumber = (float)surfaceWidth / (float)cellWidth;   // 1920 / 30 = 64
+		float cellVNumber = (float)surfaceHeight / (float)cellHeight; //  885 / 30 = 29.5
 		
-		widthRatio = cellHNumber / ROW;
-		heightRatio = cellVNumber / LINE;
+		accurateWidthRatio  = cellHNumber / (float)ROW;   //  64 / 28 = 2.28571428  
+		accurateHeightRatio = cellVNumber / (float)LINE;  // 29.5 / 9 = 3.27777777
 		
-		Log.d(TAG, "+ SurfaceWidth : " + surfaceWidth + " cellWidth : " + cellWidth + " cell horizontal number : " + cellHNumber + " widthRatio : " + widthRatio);
-		Log.d(TAG, "+ SurfaceHeight : " + surfaceHeight + " cellHeigth : " + cellHeight + " cell vertical number : " + cellVNumber + " heightRatio : " + heightRatio);
+		widthRatio = (int) accurateWidthRatio;
+		heightRatio = (int) accurateHeightRatio;
+		
+		Log.d(TAG, "+ SurfaceWidth : " + surfaceWidth + " cellWidth : " + cellWidth + " cell horizontal number : " + cellHNumber + " widthRatio : " + accurateWidthRatio);
+		Log.d(TAG, "+ SurfaceHeight : " + surfaceHeight + " cellHeigth : " + cellHeight + " cell vertical number : " + cellVNumber + " heightRatio : " + accurateHeightRatio);
 		// 1920, 64 horizontal -- ratio 2
 		// 885,  29 vertical   -- ratio 3
 		
@@ -73,127 +79,130 @@ public class GamePlateModel {
 	private static ArrayList<Plate> getHorizontalPlates(GamePlateModel game, char[][] level) {
 		ArrayList<Plate> list = new ArrayList<Plate>();
 		
-		int CELL_HEIGHT = game.CELL_HEIGHT;
-		int CELL_WIDTH = game.CELL_WIDTH;
+		// Modifications for getting an accurate width / height
+		float CELL_HEIGHT = game.CELL_HEIGHT;
+		float d = (game.accurateHeightRatio - (float) game.heightRatio) / game.heightRatio;
+		if (d > 0.0F) {
+			CELL_HEIGHT += CELL_HEIGHT * d;
+		}
 		
-		int x = 0, y = 0;
-		boolean justDraw = false;
+		float CELL_WIDTH = game.CELL_WIDTH;
+		d = (game.accurateWidthRatio - (float) game.widthRatio) / game.widthRatio;
+		if (d > 0.0F) {
+			CELL_WIDTH += CELL_WIDTH * d;
+		}
+		
+		float x = 0;
+		float y = 0;
 		for (int line = 0; line < LINE; line += 1) { // 9
+			// Patch full screen size rendering for last line
+			if (line == LINE-1) { 
+				y += (game.heightRatio-1) * CELL_HEIGHT;
+			}
 			
 			ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
-			Log.d(TAG, "New obstacle list, EMPTY ? " + obstacles.isEmpty());
+			x = getLineObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, line, obstacles);
 			
-			for (int row = 0; row < ROW-1; row += 1) { // 28
-				
-				switch (level[line][row]) {
-					case 'x' :
-						Log.d(TAG, "found : x");
-						if (level[line][row+1] != 'x') {
-							if (row == 0) {
-								// ignore x at beginning
-								break;
-							}
-							if (level[line][row-1] != 'x') {
-								// ignore non horizontal
-								break;
-							}
-						}
-						
-						for (int i = 0; i < game.widthRatio; i += 1) {
-							Log.d(TAG, "  add : x at " + x + ":" + y + " WITH " + game.widthRatio);
-							obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT, x, y));
-							x = x + CELL_WIDTH;
-						}
-						if (row == ROW-2) {
-							obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT, x, y));
-							x = x + CELL_WIDTH;
-						}
-						break;
-					default :
-						Log.d(TAG, "found : ' '");
-						for (int i = 0; i < game.widthRatio; i += 1) {
-							x = x + CELL_WIDTH;
-						}
-						break;
-				}
-			}
 			x = 0;
-			for (int i = 0; i < game.heightRatio; i += 1) {
-				y += CELL_HEIGHT;
-			}
-			Log.d(TAG, "found : new line > x=0 & y=" + y);
+			y += game.heightRatio * CELL_HEIGHT; // New line : increment from ratio grid / screen
 			
 			if (obstacles.isEmpty()) {
 				continue;
 			}
 			
 			switch (line) {
-				case 0 :
-					Plate plate = new Plate(obstacles, Gravity.TOP, line);
-					Log.d(TAG, "NUMBER OF HORIZONTAL OBSTACLES : " + obstacles.size());
-					list.add(plate);
-					break;
-				case LINE-1 :
-					Plate plate2 = new Plate(obstacles, Gravity.DOWN, line);
-					Log.d(TAG, "NUMBER OF HORIZONTAL OBSTACLES : " + obstacles.size());
-					list.add(plate2);
-					break;
-				default : 
-					Plate plate3 = new Plate(obstacles, Gravity.ALL, line);
-					Log.d(TAG, "NUMBER OF HORIZONTAL OBSTACLES : " + obstacles.size());
-					list.add(plate3);
-					break;
+			case 0 :
+				Plate plate = new Plate(obstacles, Gravity.TOP, line, Orientation.Horizontal);
+				list.add(plate);
+				break;
+			case LINE-1 :
+				Plate plate2 = new Plate(obstacles, Gravity.DOWN, line, Orientation.Horizontal);
+				list.add(plate2);
+				break;
+			default : 
+				Plate plate3 = new Plate(obstacles, Gravity.ALL, line, Orientation.Horizontal);
+				list.add(plate3);
+				break;
 			}
 		}
 		
-		
 		return list;
+	}
+
+	private static float getLineObstacles(GamePlateModel game, char[][] level, float CELL_HEIGHT, 
+			float CELL_WIDTH, float x, float y, int line,
+			ArrayList<Obstacle> obstacles) {
+		for (int row = 0; row < ROW; row += 1) { // 28
+
+			switch (level[line][row]) {
+			case 'x' :
+				if (row == ROW-1) {
+					if(line == 0 || line == LINE-1) {
+						for (int i = 0; i < game.widthRatio; i += 1) {
+							obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT, x, y));
+							x += CELL_WIDTH;
+						}
+					}
+					break;
+				}
+
+				if (level[line][row+1] != 'x') {
+					if (row == 0) {
+						// ignore x at beginning
+						break;
+					}
+					if (level[line][row-1] != 'x') {
+						// ignore non horizontal
+						break;
+					}
+				}
+
+				for (int i = 0; i < game.widthRatio; i += 1) {
+					obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT, x, y));
+					x += CELL_WIDTH;
+				}
+				break;
+			default :
+				x += game.widthRatio * CELL_WIDTH;
+				break;
+			}
+		}
+		
+		return x;
 	}
 	
 	private static ArrayList<Plate> getVerticalPlates(GamePlateModel game, char[][] level) {
 		ArrayList<Plate> list = new ArrayList<Plate>();
 		
-		int CELL_HEIGHT = game.CELL_HEIGHT;
-		int CELL_WIDTH = game.CELL_WIDTH;
+		float CELL_HEIGHT = game.CELL_HEIGHT;
+		float d = (game.accurateHeightRatio - (float) game.heightRatio) / game.heightRatio;
+		if (d > 0.0F) {
+			CELL_HEIGHT += CELL_HEIGHT * d;
+		}
 		
-		int x = 0, y = 0;
+		float CELL_WIDTH = game.CELL_WIDTH;
+		d = (game.accurateWidthRatio - (float) game.widthRatio) / game.widthRatio;
+		if (d > 0.0F) {
+			CELL_WIDTH += CELL_WIDTH * d;
+		}
+		
+		float x = 0;
+		float y = CELL_HEIGHT;
 		
 		for (int row = 0; row < ROW; row += 1) { // 28
+			// Patch full screen size rendering for last row
+			if (row == ROW-1) { 
+				x += (game.widthRatio-1) * CELL_WIDTH;
+			}
 			ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
-			for (int line = 0; line < LINE-1; line += 1) { // 9
-				Log.d(TAG, level[line][row] + "");
-				
-				switch (level[line][row]) {
-					case 'x' :
-						if (level[line+1][row] != 'x') {
-							if (line == 0) {
-								// ignore x at beginning
-								break;
-							}
-							if (level[line-1][row] != 'x') {
-								// ignore non verical
-								break;
-							}
-						}
-						
-						for (int i = 0; i < game.heightRatio; i += 1) {
-							Log.d(TAG, "  add : x at " + x + ":" + y + " WITH " + game.heightRatio );
-							obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT, x, y));
-							y = y + CELL_HEIGHT;
-						}
-						break;
-					default:
-//						y = y + (CELL_HEIGHT * game.heightRatio);
-						for (int i = 0; i < game.heightRatio; i += 1) {
-							y = y + CELL_HEIGHT;
-						}
-						break;
-				}
+			
+			y = getRowObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, row, obstacles);
+			
+			x += CELL_WIDTH * game.widthRatio;
+			y = CELL_HEIGHT * game.heightRatio;
+			if (row == ROW-2) {
+				y = CELL_HEIGHT;
 			}
-			for (int i = 0; i < game.widthRatio; i += 1) {
-				x += CELL_WIDTH;
-			}
-			y = 0;
 			
 			if (obstacles.isEmpty()) {
 				continue;
@@ -201,18 +210,60 @@ public class GamePlateModel {
 			
 			switch (row) {
 			case 0 :
-				list.add(new Plate(obstacles, Gravity.TOP, row));
+				list.add(new Plate(obstacles, Gravity.TOP, row, Orientation.Vertical));
 				break;
 			case LINE-1 :
-				list.add(new Plate(obstacles, Gravity.DOWN, row));
+				list.add(new Plate(obstacles, Gravity.DOWN, row, Orientation.Vertical));
 				break;
 			default : 
-				list.add(new Plate(obstacles, Gravity.ALL, row));
+				list.add(new Plate(obstacles, Gravity.ALL, row, Orientation.Vertical));
 				break;
 			}
 		}
 		
 		return list;
+	}
+
+	private static float getRowObstacles(GamePlateModel game, char[][] level,
+			float CELL_HEIGHT, float CELL_WIDTH, float x, float y, int row,
+			ArrayList<Obstacle> obstacles) {
+		for (int line = 0; line < LINE-1; line += 1) { // 9
+			
+			switch (level[line][row]) {
+				case 'x' :
+					if (line == LINE-2) {
+						if(row == 0 || row == ROW-1) {
+							for (int i = 0; i < game.heightRatio+1; i += 1) {
+								obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT, x, y));
+								y += CELL_HEIGHT;
+							}
+						}
+						break;
+					}
+					
+					if (level[line+1][row] != 'x' || ((line+1) == 8)) {
+						if (line == 0) {
+							// ignore x at beginning
+							break;
+						}
+						if (level[line-1][row] != 'x') {
+							// ignore non vertical
+							break;
+						}
+					}
+
+					for (int i = 0; i < game.heightRatio; i += 1) {
+						obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT, x, y));
+						y += CELL_HEIGHT;
+					}
+					break;
+				default:
+					y += CELL_HEIGHT * game.heightRatio;
+					break;
+			}
+		}
+		
+		return y;
 	}
 	
 

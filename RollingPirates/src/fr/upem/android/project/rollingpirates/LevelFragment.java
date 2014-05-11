@@ -62,9 +62,8 @@ public class LevelFragment extends Fragment {
 		
 		RelativeLayout viewContainer = (RelativeLayout) v.findViewById(R.id.levelContainer);
 		View levelView = new LevelView(getActivity(), grid);
-		levelView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.FILL_PARENT));
+		levelView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
 		viewContainer.addView(levelView);
-		
 		
 		return v;
 	}
