@@ -29,7 +29,6 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		paint.setColor(Color.BLUE);
 		holder = getHolder(); // TODO : Look at the doc & Use this shit
 		holder.addCallback(this);
-//		getHolder().setFixedSize(1848, 810);
 		setFocusable(true);
 	}
 	
@@ -43,7 +42,6 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TODO : Be sure of "How to do"
 		Canvas c = holder.lockCanvas();
-		
 		
 		Rect surfaceFrame = holder.getSurfaceFrame();
 
