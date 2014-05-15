@@ -1,6 +1,8 @@
 package fr.upem.android.project.rollingpirates;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 import android.graphics.Rect;
 import android.graphics.Path.Direction;
@@ -13,13 +15,11 @@ public class GamePlateModel {
 	
 	
 	private final static int ROW = 28;
-	private final static int LINE = 9;
+	private final static int MIN_LINE = 9;
+	private final static int LINE = 15;
 	
-	private final int CELL_WIDTH;
-	private final int CELL_HEIGHT;
-	
-	private final float accurateWidthRatio; 
-	private final float accurateHeightRatio;
+	private final float CELL_WIDTH;
+	private final float CELL_HEIGHT;
 	
 	private final int widthRatio; 
 	private final int heightRatio;
@@ -31,30 +31,25 @@ public class GamePlateModel {
 	private final ArrayList<Pirate> players;
 	private final ArrayList<Bonus> bonuses;
 	
-//	private final Object[][] grid;
-	
 	public GamePlateModel(int cellWidth, int cellHeight, int surfaceWidth, int surfaceHeight) {
-		CELL_WIDTH = cellWidth;
-		CELL_HEIGHT = cellHeight;
+		float cellHNumber = (float)surfaceWidth / (float)cellWidth;   	// 1920 / 30 = 64
+		float cellVNumber = (float)surfaceHeight / (float)cellHeight; 	// 885 / 30 = 29.5
 		
-		float cellHNumber = (float)surfaceWidth / (float)cellWidth;   // 1920 / 30 = 64
-		float cellVNumber = (float)surfaceHeight / (float)cellHeight; //  885 / 30 = 29.5
-		
-		accurateWidthRatio  = cellHNumber / (float)ROW;   //  64 / 28 = 2.28571428  
-		accurateHeightRatio = cellVNumber / (float)LINE;  // 29.5 / 9 = 3.27777777
+		float accurateWidthRatio  = cellHNumber / (float)ROW;   		// 64 / 28 = 2.28571428  
+		float accurateHeightRatio = cellVNumber / (float)LINE;  		// 29.5 / 9 = 3.27777777
 		
 		widthRatio = (int) accurateWidthRatio;
 		heightRatio = (int) accurateHeightRatio;
 		
-		Log.d(TAG, "+ SurfaceWidth : " + surfaceWidth + " cellWidth : " + cellWidth + " cell horizontal number : " + cellHNumber + " widthRatio : " + accurateWidthRatio);
-		Log.d(TAG, "+ SurfaceHeight : " + surfaceHeight + " cellHeigth : " + cellHeight + " cell vertical number : " + cellVNumber + " heightRatio : " + accurateHeightRatio);
-		// 1920, 64 horizontal -- ratio 2
-		// 885,  29 vertical   -- ratio 3
+		// Modifications for getting an accurate width / height
+		float d = (accurateHeightRatio - (float) heightRatio) / heightRatio;
+		CELL_HEIGHT = cellWidth + cellWidth * d;
+		d = (accurateWidthRatio - (float) widthRatio) / widthRatio;
+		CELL_WIDTH = cellHeight + cellHeight * d;
 		
 		hplates = new ArrayList<Plate>();
 		vplates = new ArrayList<Plate>();
 		
-		plates = new ArrayList<Plate>();
 		players = new ArrayList<Pirate>();
 		bonuses = new ArrayList<Bonus>();
 	}
@@ -64,6 +59,7 @@ public class GamePlateModel {
 		
 		game.hplates.addAll(getHorizontalPlates(game, level));
 		game.vplates.addAll(getVerticalPlates(game, level));
+		game.players.addAll(getPirates(game, level));
 		
 		return game;
 	}
@@ -76,32 +72,21 @@ public class GamePlateModel {
 		return vplates;
 	}
 	
+	public ArrayList<Pirate> getPirates() {
+		return players;
+	}
+	
 	private static ArrayList<Plate> getHorizontalPlates(GamePlateModel game, char[][] level) {
 		ArrayList<Plate> list = new ArrayList<Plate>();
 		
-		// Modifications for getting an accurate width / height
 		float CELL_HEIGHT = game.CELL_HEIGHT;
-		float d = (game.accurateHeightRatio - (float) game.heightRatio) / game.heightRatio;
-		if (d > 0.0F) {
-			CELL_HEIGHT += CELL_HEIGHT * d;
-		}
-		
 		float CELL_WIDTH = game.CELL_WIDTH;
-		d = (game.accurateWidthRatio - (float) game.widthRatio) / game.widthRatio;
-		if (d > 0.0F) {
-			CELL_WIDTH += CELL_WIDTH * d;
-		}
 		
 		float x = 0;
 		float y = 0;
 		for (int line = 0; line < LINE; line += 1) { // 9
-			// Patch full screen size rendering for last line
-//			if (line == LINE-1) { 
-//				y += (game.heightRatio-1) * CELL_HEIGHT;
-//			}
-			
 			ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
-			x = getLineObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, line, obstacles);
+			getLineObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, line, obstacles);
 			
 			x = 0;
 			y += game.heightRatio * CELL_HEIGHT; // New line : increment from ratio grid / screen
@@ -129,7 +114,7 @@ public class GamePlateModel {
 		return list;
 	}
 
-	private static float getLineObstacles(GamePlateModel game, char[][] level, float CELL_HEIGHT, 
+	private static void getLineObstacles(GamePlateModel game, char[][] level, float CELL_HEIGHT, 
 			float CELL_WIDTH, float x, float y, int line,
 			ArrayList<Obstacle> obstacles) {
 		for (int row = 0; row < ROW; row += 1) { // 28
@@ -175,24 +160,13 @@ public class GamePlateModel {
 				break;
 			}
 		}
-		
-		return x;
 	}
 	
 	private static ArrayList<Plate> getVerticalPlates(GamePlateModel game, char[][] level) {
 		ArrayList<Plate> list = new ArrayList<Plate>();
 		
 		float CELL_HEIGHT = game.CELL_HEIGHT;
-		float d = (game.accurateHeightRatio - (float) game.heightRatio) / game.heightRatio;
-		if (d > 0.0F) {
-			CELL_HEIGHT += CELL_HEIGHT * d;
-		}
-		
 		float CELL_WIDTH = game.CELL_WIDTH;
-		d = (game.accurateWidthRatio - (float) game.widthRatio) / game.widthRatio;
-		if (d > 0.0F) {
-			CELL_WIDTH += CELL_WIDTH * d;
-		}
 		
 		float x = 0;
 		float y = CELL_HEIGHT;
@@ -205,9 +179,10 @@ public class GamePlateModel {
 			if (row != 0) { 
 				y -= CELL_HEIGHT * game.heightRatio;
 			}
+			
 			ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 			
-			y = getRowObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, row, obstacles);
+			getRowObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, row, obstacles);
 			
 			x += CELL_WIDTH * game.widthRatio;
 			y = CELL_HEIGHT * game.heightRatio;
@@ -235,7 +210,7 @@ public class GamePlateModel {
 		return list;
 	}
 
-	private static float getRowObstacles(GamePlateModel game, char[][] level,
+	private static void getRowObstacles(GamePlateModel game, char[][] level,
 			float CELL_HEIGHT, float CELL_WIDTH, float x, float y, int row,
 			ArrayList<Obstacle> obstacles) {
 		for (int line = 0; line < LINE-1; line += 1) { // 9
@@ -255,12 +230,12 @@ public class GamePlateModel {
 					if (level[line+1][row] != 'x' || ((line+1) == 8)) {
 						if (line == 0) {
 							// ignore x at beginning
-							y += CELL_HEIGHT * game.heightRatio; // TODO : 13/05
+							y += CELL_HEIGHT * game.heightRatio;
 							break;
 						}
 						if (level[line-1][row] != 'x') {
 							// ignore non vertical
-							y += CELL_HEIGHT * game.heightRatio; // TODO : 13/05
+							y += CELL_HEIGHT * game.heightRatio;
 							break;
 						}
 					}
@@ -275,16 +250,52 @@ public class GamePlateModel {
 					break;
 			}
 		}
-		
-		return y;
 	}
 	
+	private static ArrayList<Pirate> getPirates(GamePlateModel game, char[][] level) {
+		ArrayList<Pirate> list = new ArrayList<Pirate>();
+		
+		// Modifications for getting an accurate width / height
+		float CELL_HEIGHT = game.CELL_HEIGHT;
+		float CELL_WIDTH = game.CELL_WIDTH;
+		
+		float x = 0;
+		float y = 0;
+		for (int line = 0; line < LINE; line += 1) { // 15
+			getLinePirates(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, line, list);
+			
+			x = 0;
+			y += game.heightRatio * CELL_HEIGHT; // New line : increment from ratio grid / screen
+		}
+		
+		return list;
+	}
+	
+
+	private static void getLinePirates(GamePlateModel game, char[][] level,
+			float CELL_HEIGHT, float CELL_WIDTH, float x, float y, int line,
+			ArrayList<Pirate> pirates) {
+
+		for (int row = 0; row < ROW; row += 1) { // 28
+			if (Pirate.isPirate(level[line][row])) {
+				for (int i = 0; i < game.widthRatio; i += 1) {
+					pirates.add(new Pirate(CELL_WIDTH, CELL_HEIGHT * game.heightRatio, x, y));
+					x += CELL_WIDTH;
+				}
+			} else {
+				x += game.widthRatio * CELL_WIDTH;
+			}
+		}
+
+	}
 
 	/**
 	 *  This method will verify some basic properties of the given file (level) :
 	 *  	- Same char number per line for each one
 	 *  	- Only 9 lines and 28 char per line
 	 * 		- No holes on borders
+	 * 
+	 * It will also resize the given ASCII level, for a better resolution.
 	 * 
 	 * @param byte buffer input
 	 * @return grid of ASCII characters representing the arena
@@ -328,7 +339,8 @@ public class GamePlateModel {
 			current_row += 1;
 		}
 		
-		// TODO : Check if grid is "hole-safe" and other stuffs
+		// Enlarge grid height
+		grid = duplicateGridLines(grid);
 		
 		Log.d(TAG, "++++++++++++++++++++++++++++");
 		for (char[] c : grid) {
@@ -343,5 +355,81 @@ public class GamePlateModel {
 		Log.d(TAG, "Line : " + grid.length + "  --  Row : " + grid[0].length);
 		
 		return grid;
+	}
+
+	/**
+	 * This method will duplicate a line (height oriented), but it will not duplicate 
+	 *  horizontal obstacles.
+	 * 
+	 * @param grid
+	 * @param current_line
+	 */
+	private static char[][] duplicateGridLines(char[][] grid) {
+		char newGrid[][] = new char[LINE][ROW];
+		
+		int newGrid_line = 0;
+		for (int current_line = 0; current_line < grid.length; current_line+=1) {
+			if (newGrid_line >=  grid.length) {
+				break;
+			}
+			
+			newGrid[newGrid_line] = Arrays.copyOf(grid[current_line], grid[current_line].length);
+			
+			// Modify line if necessary
+			ensurePositions(newGrid, newGrid_line);
+
+			if (current_line == 0 || newGrid_line >= LINE-2) {
+				newGrid_line += 1;
+				continue;
+			}
+			
+			
+			newGrid[newGrid_line+1] = Arrays.copyOf(newGrid[newGrid_line], newGrid[newGrid_line].length);
+			newGrid_line += 1;
+			
+			for (int j = 0; j < newGrid[newGrid_line].length; j+=1) {
+				boolean erase = false;
+
+				switch (newGrid[newGrid_line][j]) {
+				case 'x' :
+					if (grid[current_line-1][j] != 'x' && grid[current_line+1][j] != 'x') {
+						erase = true;
+					}
+					break;
+				default:
+					if (newGrid[newGrid_line][j] != ' ') {
+						erase = true;
+					}
+					break;
+				}
+				
+				if (erase) {
+					newGrid[newGrid_line][j] = ' ';
+				}
+			}
+			newGrid_line += 1;
+		}
+		
+		
+		return newGrid;
+	}
+
+	private static void ensurePositions(char[][] newGrid, int newGrid_line) {
+		if (newGrid_line == 0 || newGrid_line >= LINE-2) {
+			return;
+		}
+		
+		for (int i = 1; i < newGrid[newGrid_line].length-1; i+=1) {
+			char c = newGrid[newGrid_line][i];
+			Log.d(TAG, "  >>>>>>>>>>> : " + c);
+			if (Pirate.isPirate(c) || Bonus.isBonus(c)) {
+				if (newGrid[newGrid_line-1][i] == ' ' && newGrid[newGrid_line][i+1] == ' ' && newGrid[newGrid_line][i-1] == ' ') {
+					newGrid[newGrid_line-1][i] = c;
+					newGrid[newGrid_line][i] = ' ';
+				}
+			}
+			
+		}
+		
 	}
 }
