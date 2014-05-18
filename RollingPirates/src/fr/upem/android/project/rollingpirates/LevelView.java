@@ -48,7 +48,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		GamePlateModel model = GamePlateModel.init(grid, surfaceFrame.width(), surfaceFrame.height());
 		
         c.drawARGB(255, 255, 255, 255);
-
+        
 		int i = 0;
 		ArrayList<Plate> vplates = model.getVPlates();
 		for (Plate p : vplates) {
