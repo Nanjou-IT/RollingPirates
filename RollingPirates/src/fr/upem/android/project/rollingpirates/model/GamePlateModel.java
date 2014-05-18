@@ -1,9 +1,11 @@
-package fr.upem.android.project.rollingpirates;
+package fr.upem.android.project.rollingpirates.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
+import fr.upem.android.project.rollingpirates.view.LevelView;
 import android.graphics.Rect;
 import android.graphics.Path.Direction;
 import android.util.Log;
@@ -12,7 +14,6 @@ import android.widget.Toast;
 public class GamePlateModel {
 	
 	private final static String TAG = "GamePlateModel";
-	
 	
 	private final static int ROW = 28;
 	private final static int MIN_LINE = 9;
@@ -30,6 +31,8 @@ public class GamePlateModel {
 	private ArrayList<Plate> plates;
 	private final ArrayList<Pirate> players;
 	private final ArrayList<Bonus> bonuses;
+	
+	private final ArrayList<LevelView> views;
 	
 	public GamePlateModel(int cellWidth, int cellHeight, int surfaceWidth, int surfaceHeight) {
 		float cellHNumber = (float)surfaceWidth / (float)cellWidth;   	// 1920 / 30 = 64
@@ -52,6 +55,7 @@ public class GamePlateModel {
 		
 		players = new ArrayList<Pirate>();
 		bonuses = new ArrayList<Bonus>();
+		views = new ArrayList<LevelView>();
 	}
 	
 	public static GamePlateModel init(char[][] level, int surfaceWidth, int surfaceHeight) {
@@ -65,15 +69,38 @@ public class GamePlateModel {
 	}
 
 	public ArrayList<Plate> getHPlates() {
-		return hplates;
+		return (ArrayList<Plate>) Collections.unmodifiableCollection(hplates);
 	}
 
 	public ArrayList<Plate> getVPlates() {
-		return vplates;
+		return (ArrayList<Plate>) Collections.unmodifiableCollection(vplates);
 	}
 	
 	public ArrayList<Pirate> getPirates() {
-		return players;
+		return (ArrayList<Pirate>) Collections.unmodifiableCollection(players);
+	}
+	
+	public void modelChanged() {
+		for (LevelView v : views) {
+			v.redrawModel();
+		}
+	}
+
+	public void register(LevelView levelView) {
+		views.add(levelView);
+	}
+
+	public void unregister(LevelView levelView) {
+		views.remove(levelView);
+	}
+	
+	/**
+	 *  Function used outside of the model for ANY update.
+	 */
+	public void updateModel() {
+		// TODO : Model modifications
+		
+		modelChanged();
 	}
 	
 	private static ArrayList<Plate> getHorizontalPlates(GamePlateModel game, char[][] level) {
@@ -421,14 +448,12 @@ public class GamePlateModel {
 		
 		for (int i = 1; i < newGrid[newGrid_line].length-1; i+=1) {
 			char c = newGrid[newGrid_line][i];
-			Log.d(TAG, "  >>>>>>>>>>> : " + c);
 			if (Pirate.isPirate(c) || Bonus.isBonus(c)) {
 				if (newGrid[newGrid_line-1][i] == ' ' && newGrid[newGrid_line][i+1] == ' ' && newGrid[newGrid_line][i-1] == ' ') {
 					newGrid[newGrid_line-1][i] = c;
 					newGrid[newGrid_line][i] = ' ';
 				}
 			}
-			
 		}
 		
 	}

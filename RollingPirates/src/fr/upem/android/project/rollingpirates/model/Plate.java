@@ -1,4 +1,4 @@
-package fr.upem.android.project.rollingpirates;
+package fr.upem.android.project.rollingpirates.model;
 
 import java.util.ArrayList;
 
@@ -9,13 +9,11 @@ enum Orientation { Horizontal, Vertical; }
 public class Plate {
 	private final ArrayList<Obstacle> obstacles;
 	private final Gravity g;
-	final int lineOrRow;
 	private final Orientation o;
 	
 	public Plate(ArrayList<Obstacle> obstacles, Gravity direction, int lineRowNumber, Orientation orientation) {
 		this.obstacles = obstacles;
 		g = direction;
-		lineOrRow = lineRowNumber + 1;
 		o = orientation;
 	}
 	
