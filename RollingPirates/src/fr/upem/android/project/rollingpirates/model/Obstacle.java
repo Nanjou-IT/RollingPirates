@@ -1,4 +1,4 @@
-package fr.upem.android.project.rollingpirates;
+package fr.upem.android.project.rollingpirates.model;
 
 public class Obstacle {
 	private final float width;

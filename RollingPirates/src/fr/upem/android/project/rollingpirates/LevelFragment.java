@@ -3,6 +3,8 @@ package fr.upem.android.project.rollingpirates;
 import java.io.IOException;
 import java.io.InputStream;
 
+import fr.upem.android.project.rollingpirates.model.GamePlateModel;
+import fr.upem.android.project.rollingpirates.view.LevelView;
 import android.app.Fragment;
 import android.content.res.AssetManager;
 import android.os.Bundle;

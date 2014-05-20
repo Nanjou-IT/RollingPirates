@@ -19,7 +19,6 @@ public class LoadLevelActivity extends Activity {
         // TODO : Receive the game level as an integer !
         int gameLevel = 2;
         
-        
         AssetManager assets = getAssets();
         String[] levelList = null;
         try {

@@ -11,37 +11,24 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
-        if( i.getStringExtra("selectedItem") == null){
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        MenuFragment mainMenu = MenuFragment.createMainMenu();
-        transaction.replace(android.R.id.content, mainMenu);
-        transaction.commit();
+        if (i.getStringExtra("selectedItem") == null) {
+        	FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        	MenuFragment mainMenu = MenuFragment.createMainMenu();
+        	transaction.replace(android.R.id.content, mainMenu);
+        	transaction.commit();
         } else {
-        	if(i.getStringExtra("selectedItem").equals("Settings")){
-        		   FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        	        MenuFragment settingMenu = MenuFragment.createSettingMenu();
-        	        transaction.replace(android.R.id.content, settingMenu);
-        	        transaction.commit();
+        	if (i.getStringExtra("selectedItem").equals("Settings")) {
+        		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        		MenuFragment settingMenu = MenuFragment.createSettingMenu();
+        		transaction.replace(android.R.id.content, settingMenu);
+        		transaction.commit();
         	}
         	if(i.getStringExtra("selectedItem").equals("Help")){
-        		
+        		// TODO
         	}
         	if(i.getStringExtra("selectedItem").equals("About")){
-        		
+        		// TODO
         	}
-        	
         }
-        
-    	/*newGame.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				
-			}
-		});*/
-	
-      //  Log.d("DEBUG",newGame.getText().toString());
-   //     boolean i = newGame.isClickable();
-    // Log.d("DEBUG",String.valueOf(i));
     }
 }
