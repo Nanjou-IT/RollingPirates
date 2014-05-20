@@ -34,7 +34,12 @@ public class GamePlateModel {
 	
 	private final ArrayList<LevelView> views;
 	
+	private final int surfaceWidth;
+	private final int surfaceheight;
+	
 	public GamePlateModel(int cellWidth, int cellHeight, int surfaceWidth, int surfaceHeight) {
+		this.surfaceheight = surfaceHeight;
+		this.surfaceWidth = surfaceWidth;
 		float cellHNumber = (float)surfaceWidth / (float)cellWidth;   	// 1920 / 30 = 64
 		float cellVNumber = (float)surfaceHeight / (float)cellHeight; 	// 885 / 30 = 29.5
 		
@@ -82,7 +87,12 @@ public class GamePlateModel {
 		return players;
 //		return (ArrayList<Pirate>) Collections.unmodifiableCollection(players);
 	}
-	
+	public int getSurfaceheight() {
+		return surfaceheight;
+	}
+	public int getSurfaceWidth() {
+		return surfaceWidth;
+	}
 	public void modelChanged() {
 		Log.d("GPM", "Model chnaged");
 		for (LevelView v : views) {
