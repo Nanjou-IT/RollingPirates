@@ -317,11 +317,11 @@ public class GamePlateModel {
 	private static void getLinePirates(GamePlateModel game, char[][] level,
 			float CELL_HEIGHT, float CELL_WIDTH, float x, float y, int line,
 			ArrayList<Pirate> pirates) {
-
+		
 		for (int row = 0; row < ROW; row += 1) { // 28
 			if (Pirate.isPirate(level[line][row])) {
 				for (int i = 0; i < game.widthRatio; i += 1) {
-					pirates.add(new Pirate(CELL_WIDTH, CELL_HEIGHT * game.heightRatio, x, y));
+					pirates.add(new Pirate(x, y,pirates.size()));
 					x += CELL_WIDTH;
 				}
 			} else {

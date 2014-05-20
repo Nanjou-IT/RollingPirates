@@ -1,5 +1,6 @@
 package fr.upem.android.project.rollingpirates;
 
+import android.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,7 +31,7 @@ public class Pirate implements Runnable {
 	}
 	public void setSkin(Context c){
 		if(playerCounter == PLAYER_ONE){
-			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.bad2);
+			bmp = BitmapFactory.decodeResource(c.getResources(),R.drawable.bad2);
 		}
 		else if(playerCounter == PLAYER_TWO){
 			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.bad3);

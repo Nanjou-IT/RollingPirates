@@ -111,7 +111,9 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		ArrayList<Pirate> pirates = model.getPirates();
 		for (Pirate p : pirates) {
 			i += 1;
-			c.drawRect(p.getX(), p.getY(), p.getX() + p.getWidth(), p.getY() + p.getHeight(), paint);
+			p.setSkin(getContext());
+			p.setModel(model);
+			new Thread(p).start();
 		}
 	}
 	
