@@ -1,10 +1,10 @@
 package fr.upem.android.project.rollingpirates.model;
 
 public class Pirate {
-	private final float width;
-	private final float height;
+	public final float width;
+	public final float height;
 	public float x; // point at left
-	private final float y; // point at top
+	public float y; // point at top
 	
 	public Pirate(float width, float height, float x, float y) {
 		this.width = width;

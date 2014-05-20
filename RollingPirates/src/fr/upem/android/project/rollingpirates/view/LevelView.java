@@ -55,8 +55,9 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		// TODO : Launch controller Threads which modify the model (give model reference)
 		ArrayList<Pirate> pirates = model.getPirates();
 		for (int i = 0; i < pirates.size(); i+=1) {
-			FightingPirate fightingPirate = new FightingPirate(model);
+			FightingPirate fightingPirate = new FightingPirate(model, pirates.get(i));
 			new Thread(fightingPirate).start();
+//			break;
 		}
 		
 		
@@ -89,7 +90,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 			i += 1;
 			ArrayList<Obstacle> obstacles = p.getObstacles();
 			for (Obstacle o : obstacles) {
-				Log.d("LevelView", "  + Draw : " + "left: " + o.getX ()+ "top: " + o.getY() + "right: " + (o.getX() + o.getWidth()) + "bottom: " + (o.getY() + o.getHeight()));
+//				Log.d("LevelView", "  + Draw : " + "left: " + o.getX ()+ "top: " + o.getY() + "right: " + (o.getX() + o.getWidth()) + "bottom: " + (o.getY() + o.getHeight()));
 				c.drawRect(o.getX(), o.getY(), o.getX() + o.getWidth(), o.getY() + o.getHeight(), paint);
 			}
 		}
@@ -101,7 +102,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 			i += 1;
 			ArrayList<Obstacle> obstacles = p.getObstacles();
 			for (Obstacle o : obstacles) {
-				Log.d("LevelView", "  + Draw : " + "left: " + o.getX ()+ "top: " + o.getY() + "right: " + (o.getX() + o.getWidth()) + "bottom: " + (o.getY() + o.getHeight()));
+//				Log.d("LevelView", "  + Draw : " + "left: " + o.getX ()+ "top: " + o.getY() + "right: " + (o.getX() + o.getWidth()) + "bottom: " + (o.getY() + o.getHeight()));
 				c.drawRect(o.getX(), o.getY(), o.getX() + o.getWidth(), o.getY() + o.getHeight(), paint);
 			}
 		}
