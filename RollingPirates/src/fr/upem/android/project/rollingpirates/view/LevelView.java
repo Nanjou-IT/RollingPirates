@@ -2,6 +2,7 @@ package fr.upem.android.project.rollingpirates.view;
 
 import java.util.ArrayList;
 
+import fr.upem.android.project.rollingpirates.controller.FightingPirate;
 import fr.upem.android.project.rollingpirates.model.GamePlateModel;
 import fr.upem.android.project.rollingpirates.model.Obstacle;
 import fr.upem.android.project.rollingpirates.model.Pirate;
@@ -50,12 +51,21 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		model = GamePlateModel.init(grid, surfaceFrame.width(), surfaceFrame.height());
 		model.register(this);
 		drawModel(c);
+
+		// TODO : Launch controller Threads which modify the model (give model reference)
+		ArrayList<Pirate> pirates = model.getPirates();
+		for (int i = 0; i < pirates.size(); i+=1) {
+			FightingPirate fightingPirate = new FightingPirate(model);
+			new Thread(fightingPirate).start();
+		}
+		
 		
         holder.unlockCanvasAndPost(c);
 	}
 
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+// 		Do not use for now
 //		Canvas c = holder.lockCanvas();
 //
 //		
@@ -73,6 +83,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		c.drawARGB(255, 255, 255, 255);
 
 		int i = 0;
+		paint.setColor(Color.BLUE);
 		ArrayList<Plate> vplates = model.getVPlates();
 		for (Plate p : vplates) {
 			i += 1;

@@ -29,7 +29,7 @@ public class GamePlateModel {
 	private ArrayList<Plate> vplates;
 	
 	private ArrayList<Plate> plates;
-	private final ArrayList<Pirate> players;
+	private ArrayList<Pirate> players;
 	private final ArrayList<Bonus> bonuses;
 	
 	private final ArrayList<LevelView> views;
@@ -69,19 +69,24 @@ public class GamePlateModel {
 	}
 
 	public ArrayList<Plate> getHPlates() {
-		return (ArrayList<Plate>) Collections.unmodifiableCollection(hplates);
+		return hplates;
+//		return (ArrayList<Plate>) Collections.unmodifiableCollection(hplates);
 	}
 
 	public ArrayList<Plate> getVPlates() {
-		return (ArrayList<Plate>) Collections.unmodifiableCollection(vplates);
+		return vplates;
+//		return (ArrayList<Plate>) Collections.unmodifiableCollection(vplates);
 	}
 	
 	public ArrayList<Pirate> getPirates() {
-		return (ArrayList<Pirate>) Collections.unmodifiableCollection(players);
+		return players;
+//		return (ArrayList<Pirate>) Collections.unmodifiableCollection(players);
 	}
 	
 	public void modelChanged() {
+		Log.d("GPM", "Model chnaged");
 		for (LevelView v : views) {
+			Log.d("GPM", "redraw model for a view !");
 			v.redrawModel();
 		}
 	}
@@ -97,9 +102,9 @@ public class GamePlateModel {
 	/**
 	 *  Function used outside of the model for ANY update.
 	 */
-	public void updateModel() {
+	public void updateModel(GamePlateModel model) {
 		// TODO : Model modifications
-		
+		players = model.players;
 		modelChanged();
 	}
 	

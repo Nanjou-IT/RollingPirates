@@ -3,7 +3,7 @@ package fr.upem.android.project.rollingpirates.model;
 public class Pirate {
 	private final float width;
 	private final float height;
-	private final float x; // point at left
+	public float x; // point at left
 	private final float y; // point at top
 	
 	public Pirate(float width, float height, float x, float y) {
@@ -31,5 +31,10 @@ public class Pirate {
 
 	public float getY() {
 		return y;
+	}
+	
+	@Override
+	public String toString() {
+		return "width: " + width + "  height: " + height + "  x: " + x + "  y: " + y;
 	}
 }
