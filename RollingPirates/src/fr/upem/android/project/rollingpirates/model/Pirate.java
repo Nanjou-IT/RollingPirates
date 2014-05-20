@@ -1,6 +1,5 @@
-package fr.upem.android.project.rollingpirates;
+package fr.upem.android.project.rollingpirates.model;
 
-import android.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,7 +11,7 @@ public class Pirate implements Runnable {
     private static final int BMP_COLUMNS = 3;
     private static final int PLAYER_ONE = 0;
 	private static final int PLAYER_TWO = 1;
-	
+
 	private float x; // point at left
 	private float y; // point at top
 	private final int playerCounter;
