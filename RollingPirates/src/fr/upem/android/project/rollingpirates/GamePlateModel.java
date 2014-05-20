@@ -2,13 +2,12 @@ package fr.upem.android.project.rollingpirates;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Rect;
+import android.graphics.Path.Direction;
 import android.util.Log;
+import android.widget.Toast;
 
 public class GamePlateModel {
 	
@@ -21,7 +20,7 @@ public class GamePlateModel {
 	
 	private final float CELL_WIDTH;
 	private final float CELL_HEIGHT;
-		
+	
 	private final int widthRatio; 
 	private final int heightRatio;
 	
@@ -32,12 +31,7 @@ public class GamePlateModel {
 	private final ArrayList<Pirate> players;
 	private final ArrayList<Bonus> bonuses;
 	
-	private int surfaceWidth;
-	private int surfaceHeight;
-	
 	public GamePlateModel(int cellWidth, int cellHeight, int surfaceWidth, int surfaceHeight) {
-		this.surfaceWidth = surfaceWidth;
-		this.surfaceHeight = surfaceHeight;
 		float cellHNumber = (float)surfaceWidth / (float)cellWidth;   	// 1920 / 30 = 64
 		float cellVNumber = (float)surfaceHeight / (float)cellHeight; 	// 885 / 30 = 29.5
 		
@@ -65,8 +59,7 @@ public class GamePlateModel {
 		
 		game.hplates.addAll(getHorizontalPlates(game, level));
 		game.vplates.addAll(getVerticalPlates(game, level));
-		game.players.addAll(getPirates(game, level));		
-		
+		game.players.addAll(getPirates(game, level));
 		
 		return game;
 	}
@@ -82,12 +75,7 @@ public class GamePlateModel {
 	public ArrayList<Pirate> getPirates() {
 		return players;
 	}
-	public  int getSurfaceWidth(){
-		return surfaceWidth;
-	}
-	public  int getSurfaceHeight(){
-		return surfaceHeight;
-	}
+	
 	private static ArrayList<Plate> getHorizontalPlates(GamePlateModel game, char[][] level) {
 		ArrayList<Plate> list = new ArrayList<Plate>();
 		
@@ -263,7 +251,7 @@ public class GamePlateModel {
 			}
 		}
 	}
-
+	
 	private static ArrayList<Pirate> getPirates(GamePlateModel game, char[][] level) {
 		ArrayList<Pirate> list = new ArrayList<Pirate>();
 		
@@ -287,18 +275,13 @@ public class GamePlateModel {
 	private static void getLinePirates(GamePlateModel game, char[][] level,
 			float CELL_HEIGHT, float CELL_WIDTH, float x, float y, int line,
 			ArrayList<Pirate> pirates) {
-		
-		int playerCounter = pirates.size();
+
 		for (int row = 0; row < ROW; row += 1) { // 28
 			if (Pirate.isPirate(level[line][row])) {
 				for (int i = 0; i < game.widthRatio; i += 1) {
-					Log.d("PIRATE", Integer.toString(playerCounter));
-					//pirates.add(new Pirate(CELL_WIDTH, CELL_HEIGHT * game.heightRatio, x, y,playerCounter));
-					pirates.add(new Pirate(x, y,playerCounter));
+					pirates.add(new Pirate(CELL_WIDTH, CELL_HEIGHT * game.heightRatio, x, y));
 					x += CELL_WIDTH;
-					
 				}
-		
 			} else {
 				x += game.widthRatio * CELL_WIDTH;
 			}

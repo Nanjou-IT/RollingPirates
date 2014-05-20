@@ -15,7 +15,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
-public class LevelView extends SurfaceView implements SurfaceHolder.Callback{
+public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 
 	private final Paint paint;
 	private SurfaceHolder holder;
@@ -34,14 +34,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback{
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		
-		float xBorder = holder.getSurfaceFrame().width()/2; 
-		if (event.getX()< xBorder) {
-			Toast.makeText(getContext(), "Playe ONE", Toast.LENGTH_SHORT/100).show();
-		}
-		if (event.getX()> xBorder) {
-			Toast.makeText(getContext(), "Playe TWO", Toast.LENGTH_SHORT/100).show();
-		}
+//		Toast.makeText(getContext(), "Surface view is loaded -> height=" + getHeight()/9 + "  width=" + getWidth()/28, Toast.LENGTH_LONG).show();
 		return true;
 	}
 
@@ -82,12 +75,11 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback{
 		}
 		
 		i = 0;
+		paint.setColor(Color.GREEN);
 		ArrayList<Pirate> pirates = model.getPirates();
 		for (Pirate p : pirates) {
 			i += 1;
-			p.setSkin(getContext());
-			p.setModel(model);
-			new Thread(p).start();
+			c.drawRect(p.getX(), p.getY(), p.getX() + p.getWidth(), p.getY() + p.getHeight(), paint);
 		}
 		
         holder.unlockCanvasAndPost(c);
@@ -104,6 +96,4 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback{
 		// TODO Auto-generated method stub
 		
 	}
-	
-	
 }
