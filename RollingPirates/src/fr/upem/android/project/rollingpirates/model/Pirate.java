@@ -1,11 +1,11 @@
 package fr.upem.android.project.rollingpirates.model;
 
-import fr.upem.android.project.rollingpirates.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import fr.upem.android.project.rollingpirates.R;
 
 public class Pirate implements Runnable {
 	private static final int BMP_ROWS = 4;
@@ -21,9 +21,12 @@ public class Pirate implements Runnable {
 	private Bitmap bmp;
 	private boolean running;
 	private GamePlateModel model;
+	
+	private Gravity gravity;
+	private Orientation orientation;
 	  
 	
-	private int speed= 5;
+	private int speed = 5;
 	
 	public Pirate(float x, float y, int playerCounter) {
 		this.x = x;
@@ -41,7 +44,12 @@ public class Pirate implements Runnable {
 		setHeight(bmp.getHeight()/BMP_ROWS);
 		
 	}
-	
+	public void setGravity(Gravity gravity){
+		this.gravity = gravity;
+	}
+	public void setOrientation(Orientation orientation){
+		this.orientation = orientation;
+	}
 	public static boolean isPirate(char c) {
 		return Character.isDigit(c);
 	}
@@ -61,17 +69,17 @@ public class Pirate implements Runnable {
 	public float getWidth() {
 		return width;
 	}
-
 	public float getHeight() {
 		return height;
 	}
-
 	public float getX() {
 		return x;
 	}
-
 	public float getY() {
 		return y;
+	}
+	public void setGravity(){
+		
 	}
 	public void setWidth(float width) {
 		this.width = width;
@@ -91,13 +99,5 @@ public class Pirate implements Runnable {
         Rect src = new Rect(srcX, srcY, srcX + (int)getWidth(), srcY + (int)getHeight());
         Rect dst = new Rect((int)getX() , (int)getY() , (int)getX() + (int)getWidth(), (int)getY() + (int)getHeight());
 		c.drawBitmap(getBitmap(),src,dst, null);
-	}
-	@Override
-	public void run() {
-		while(running){
-				
-				update();
-				
-		}
 	}
 }

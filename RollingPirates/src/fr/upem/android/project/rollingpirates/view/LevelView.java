@@ -59,7 +59,6 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 			new Thread(fightingPirate).start();
 		}
 		
-		
         holder.unlockCanvasAndPost(c);
 	}
 
@@ -113,7 +112,6 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 			p.setSkin(getContext());
 			p.setModel(model);
 			p.draw(c);
-			new Thread(p).start();
 		}
 	}
 	
