@@ -2,14 +2,9 @@ package fr.upem.android.project.rollingpirates.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
-import fr.upem.android.project.rollingpirates.view.LevelView;
-import android.graphics.Rect;
-import android.graphics.Path.Direction;
 import android.util.Log;
-import android.widget.Toast;
+import fr.upem.android.project.rollingpirates.view.LevelView;
 
 public class GamePlateModel {
 	

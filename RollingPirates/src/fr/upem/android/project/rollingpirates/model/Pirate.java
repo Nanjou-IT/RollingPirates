@@ -1,5 +1,6 @@
 package fr.upem.android.project.rollingpirates.model;
 
+import fr.upem.android.project.rollingpirates.R;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ public class Pirate implements Runnable {
 	private boolean running;
 	private GamePlateModel model;
 	  
+	
 	private int speed= 5;
 	
 	public Pirate(float x, float y, int playerCounter) {
@@ -33,7 +35,7 @@ public class Pirate implements Runnable {
 			bmp = BitmapFactory.decodeResource(c.getResources(),R.drawable.bad2);
 		}
 		else if(playerCounter == PLAYER_TWO){
-			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.bad3);
+			bmp = BitmapFactory.decodeResource(c.getResources(),R.drawable.bad3);
 		}
 		setWidth(bmp.getWidth()/BMP_COLUMNS);
 		setHeight(bmp.getHeight()/BMP_ROWS);
@@ -93,7 +95,9 @@ public class Pirate implements Runnable {
 	@Override
 	public void run() {
 		while(running){
+				
 				update();
+				
 		}
 	}
 }
