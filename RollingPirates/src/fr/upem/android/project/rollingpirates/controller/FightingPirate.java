@@ -11,7 +11,7 @@ public class FightingPirate implements Runnable {
 
 	private final GamePlateModel model;
 	private final Pirate pirate;
-	private int speed = 1;
+	private int speed = 4;
 	
 	public FightingPirate(GamePlateModel model, Pirate pirate) {
 		this.model = model;
@@ -22,7 +22,7 @@ public class FightingPirate implements Runnable {
 	public void run() {
 		while (!Thread.interrupted()) {
 			try {
-				Thread.sleep(90);
+				Thread.sleep(30000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 			}
@@ -32,22 +32,25 @@ public class FightingPirate implements Runnable {
 			ArrayList<Plate> hPlates = model.getHPlates();
 			for (Plate p : hPlates) {
 				if (p.isConnectedTo(pirate)) {
-					Log.d("FightingPirate", "Pirate -- Connected to horizontal > " + p.toString());
+//					Log.d("FightingPirate", "Pirate -- Connected to horizontal > " + p.toString());
 					pirate.x += speed;
 					break;
 				}
+				Log.d("FightingPirate", "Plate > " + p.toString());
 			}
+			Log.d("FightingPirate", "Horizotal plates > " + hPlates.size());
+			
 			
 			ArrayList<Plate> vPlates = model.getVPlates();
 			for (Plate p : vPlates) {
 				if (p.isConnectedTo(pirate)) {
-					Log.d("FightingPirate", "Pirate -- Connected to vertical > " + p.toString());
+//					Log.d("FightingPirate", "Pirate -- Connected to vertical > " + p.toString());
 					pirate.y += speed;
 					break;
 				}
+				Log.d("FightingPirate", "Plate > " + p.toString());
 			}
-			
-			
+			Log.d("FightingPirate", "Vertical plates > " + vPlates.size());
 			
 			
 			model.updateModel();

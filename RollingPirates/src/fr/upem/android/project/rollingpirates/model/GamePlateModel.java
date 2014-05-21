@@ -101,9 +101,14 @@ public class GamePlateModel {
 	 */
 	public void updateModel() {
 		// TODO : Model modifications
-//		players = model.players;
+		
 		modelChanged();
 	}
+	
+	
+	////////////////
+	// HORIZONTAL //
+	////////////////
 	
 	private static ArrayList<Plate> getHorizontalPlates(GamePlateModel game, char[][] level) {
 		ArrayList<Plate> list = new ArrayList<Plate>();
@@ -115,28 +120,13 @@ public class GamePlateModel {
 		float y = 0;
 		for (int line = 0; line < LINE; line += 1) { // 9
 			ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
-			getLineObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, line, obstacles);
+			getLineObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, line, obstacles, list);
 			
 			x = 0;
-			y += /*game.heightRatio */ CELL_HEIGHT; // New line : increment from ratio grid / screen
+			y += CELL_HEIGHT; // New line : increment from ratio grid / screen
 			
-			if (obstacles.isEmpty()) {
-				continue;
-			}
-			
-			switch (line) {
-			case 0 :
-				Plate plate = new Plate(obstacles, Gravity.TOP, line, Orientation.Horizontal);
-				list.add(plate);
-				break;
-			case LINE-1 :
-				Plate plate2 = new Plate(obstacles, Gravity.DOWN, line, Orientation.Horizontal);
-				list.add(plate2);
-				break;
-			default : 
-				Plate plate3 = new Plate(obstacles, Gravity.ALL, line, Orientation.Horizontal);
-				list.add(plate3);
-				break;
+			if (!obstacles.isEmpty()) {
+				buildPlate(list, obstacles, line);
 			}
 		}
 		
@@ -144,18 +134,15 @@ public class GamePlateModel {
 	}
 
 	private static void getLineObstacles(GamePlateModel game, char[][] level, float CELL_HEIGHT, 
-			float CELL_WIDTH, float x, float y, int line,
-			ArrayList<Obstacle> obstacles) {
+			float CELL_WIDTH, float x, float y, int line, ArrayList<Obstacle> obstacles, ArrayList<Plate> list) {
 		for (int row = 0; row < ROW; row += 1) { // 28
 
 			switch (level[line][row]) {
 			case 'x' :
 				if (row == ROW-1) {
 					if(line == 0 || line == LINE-1) {
-//						for (int i = 0; i < game.widthRatio; i += 1) {
-							obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT /* game.heightRatio*/, x, y));
-							x += CELL_WIDTH;
-//						}
+						obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT, x, y));
+						x += CELL_WIDTH;
 					}
 					break;
 				}
@@ -163,33 +150,43 @@ public class GamePlateModel {
 				if (level[line][row+1] != 'x') {
 					if (row == 0) {
 						// ignore x at beginning
-						x += /*game.widthRatio */ CELL_WIDTH;
+						x += CELL_WIDTH;
 						break;
 					}
 					if (level[line][row-1] != 'x') {
 						// ignore non horizontal
-						x += /*game.widthRatio */ CELL_WIDTH;
+						x += CELL_WIDTH; 
 						break;
 					}
 					if (level[line-1][row] == 'x' || level[line+1][row] == 'x') {
 						if (line > 1 && line < 7) {
-							x += /*game.widthRatio */ CELL_WIDTH;
+							x += CELL_WIDTH;
 							break;
 						}
 					}
 				}
 
-//				for (int i = 0; i < game.widthRatio; i += 1) {
-					obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT /* game.heightRatio*/, x, y));
-					x += CELL_WIDTH;
-//				}
+				obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT, x, y));
+				x += CELL_WIDTH;
 				break;
 			default :
-				x += /*game.widthRatio */ CELL_WIDTH;
+				x += CELL_WIDTH;
+				
+				if (obstacles.isEmpty()) {
+					break;
+				}
+				
+				buildPlate(list, obstacles, line);
+				obstacles = new ArrayList<Obstacle>();
 				break;
 			}
 		}
 	}
+	
+	
+	//////////////
+	// VERTICAL //
+	//////////////
 	
 	private static ArrayList<Plate> getVerticalPlates(GamePlateModel game, char[][] level) {
 		ArrayList<Plate> list = new ArrayList<Plate>();
@@ -203,36 +200,24 @@ public class GamePlateModel {
 		for (int row = 0; row < ROW; row += 1) { // 28
 			// Patch ignoring top & bottom obstacles
 			if (row == ROW-1) { 
-				y += CELL_HEIGHT; /* game.heightRatio;*/
+				y += CELL_HEIGHT;
 			}
 			if (row != 0) { 
-				y -= CELL_HEIGHT; /* game.heightRatio;*/
+				y -= CELL_HEIGHT;
 			}
 			
 			ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 			
-			getRowObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, row, obstacles);
+			getRowObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, row, obstacles, list);
 			
-			x += CELL_WIDTH; /* game.widthRatio;*/
-			y = CELL_HEIGHT; /* game.heightRatio;*/
+			x += CELL_WIDTH;
+			y = CELL_HEIGHT;
 			if (row == ROW-2) {
 				y = CELL_HEIGHT;
 			}
 			
-			if (obstacles.isEmpty()) {
-				continue;
-			}
-			
-			switch (row) {
-			case 0 :
-				list.add(new Plate(obstacles, Gravity.TOP, row, Orientation.Vertical));
-				break;
-			case LINE-1 :
-				list.add(new Plate(obstacles, Gravity.DOWN, row, Orientation.Vertical));
-				break;
-			default : 
-				list.add(new Plate(obstacles, Gravity.ALL, row, Orientation.Vertical));
-				break;
+			if (!obstacles.isEmpty()) {
+				buildPlate(list, obstacles, row);
 			}
 		}
 		
@@ -241,17 +226,15 @@ public class GamePlateModel {
 
 	private static void getRowObstacles(GamePlateModel game, char[][] level,
 			float CELL_HEIGHT, float CELL_WIDTH, float x, float y, int row,
-			ArrayList<Obstacle> obstacles) {
+			ArrayList<Obstacle> obstacles, ArrayList<Plate> list) {
 		for (int line = 0; line < LINE-1; line += 1) { // 9
 			
 			switch (level[line][row]) {
 				case 'x' :
 					if (line == LINE-2) {
 						if(row == 0 || row == ROW-1) {
-//							for (int i = 0; i < game.heightRatio+1; i += 1) {
-								obstacles.add(new Obstacle(/*game.widthRatio */ CELL_WIDTH, CELL_HEIGHT, x, y));
-								y += CELL_HEIGHT;
-//							}
+							obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT, x, y));
+							y += CELL_HEIGHT;
 						}
 						break;
 					}
@@ -259,25 +242,48 @@ public class GamePlateModel {
 					if (level[line+1][row] != 'x' || ((line+1) == 8)) {
 						if (line == 0) {
 							// ignore x at beginning
-							y += CELL_HEIGHT; /* game.heightRatio;*/
+							y += CELL_HEIGHT;
 							break;
 						}
 						if (level[line-1][row] != 'x') {
 							// ignore non vertical
-							y += CELL_HEIGHT; /* game.heightRatio;*/
+							y += CELL_HEIGHT;
 							break;
 						}
 					}
-
-//					for (int i = 0; i < game.heightRatio; i += 1) {
-						obstacles.add(new Obstacle(/*game.widthRatio */ CELL_WIDTH, CELL_HEIGHT, x, y));
-						y += CELL_HEIGHT;
-//					}
+					
+					obstacles.add(new Obstacle(CELL_WIDTH, CELL_HEIGHT, x, y));
+					y += CELL_HEIGHT;
 					break;
 				default:
-					y += CELL_HEIGHT; /* game.heightRatio;*/
+					y += CELL_HEIGHT;
+					
+					if (obstacles.isEmpty()) {
+						break;
+					}
+					
+					buildPlate(list, obstacles, line);
+					obstacles = new ArrayList<Obstacle>();
 					break;
 			}
+		}
+	}
+	
+	
+	private static void buildPlate(ArrayList<Plate> list, ArrayList<Obstacle> obstacles, int linerow) {
+		switch (linerow) {
+		case 0 :
+			Plate plate = new Plate(obstacles, Gravity.TOP, linerow, Orientation.Horizontal);
+			list.add(plate);
+			break;
+		case LINE-1 :
+			Plate plate2 = new Plate(obstacles, Gravity.DOWN, linerow, Orientation.Horizontal);
+			list.add(plate2);
+			break;
+		default : 
+			Plate plate3 = new Plate(obstacles, Gravity.ALL, linerow, Orientation.Horizontal);
+			list.add(plate3);
+			break;
 		}
 	}
 	
@@ -299,7 +305,6 @@ public class GamePlateModel {
 		
 		return list;
 	}
-	
 
 	private static void getLinePirates(GamePlateModel game, char[][] level,
 			float CELL_HEIGHT, float CELL_WIDTH, float x, float y, int line,
@@ -307,16 +312,14 @@ public class GamePlateModel {
 
 		for (int row = 0; row < ROW; row += 1) { // 28
 			if (Pirate.isPirate(level[line][row])) {
-//				for (int i = 0; i < game.widthRatio; i += 1) {
-					pirates.add(new Pirate(CELL_WIDTH, CELL_HEIGHT , x, y));
-					x += CELL_WIDTH;
-//				}
+				pirates.add(new Pirate(CELL_WIDTH, CELL_HEIGHT , x, y));
+				x += CELL_WIDTH;
 			} else {
 				x += CELL_WIDTH;
 			}
 		}
-
 	}
+	
 
 	/**
 	 *  This method will verify some basic properties of the given file (level) :

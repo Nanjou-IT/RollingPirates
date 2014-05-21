@@ -77,10 +77,10 @@ public class Plate {
 	}
 
 	public boolean isConnectedTo(Pirate pirate) {
-		/*if (((pirate.x + pirate.width) == minX || pirate.x == maxX) && 
+		if (((pirate.x + pirate.width) == minX || pirate.x == maxX) && 
 			((pirate.y + pirate.height) <= maxY && pirate.y >= minY)) {
 			return true;
-		}*/ 
+		}
 		if ((pirate.y == maxY || (pirate.y + pirate.height) == minY)  && 
 		   ((pirate.x + pirate.width) <= maxX && pirate.x >= minX)) {
 			return true;
