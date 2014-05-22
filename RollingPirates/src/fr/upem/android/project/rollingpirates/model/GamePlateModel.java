@@ -323,8 +323,11 @@ public class GamePlateModel {
 		
 		for (int row = 0; row < ROW; row += 1) { // 28
 			if (Pirate.isPirate(level[line][row])) {
-//				pirates.add(new Pirate(CELL_WIDTH, CELL_HEIGHT , x, y));
-				pirates.add(new Pirate(x, y, pirates.size()));
+				
+				Orientation orientation = getPiratePlateOrientationAndGravity(level, line, row);
+				Gravity gravity = getPirateGravity(orientation, level, line, row);;
+				
+				pirates.add(new Pirate(x, y, orientation, gravity, pirates.size()));
 				x += CELL_WIDTH;
 			} else {
 				x += CELL_WIDTH;
@@ -332,6 +335,38 @@ public class GamePlateModel {
 		}
 	}
 	
+
+	private static Gravity getPirateGravity(Orientation orientation, char[][] level, int line, int row) {
+		Gravity gravity = Gravity.DOWN; // default gravity
+		
+		if (level[line-1][row] == 'x') {
+			gravity = Gravity.TOP;
+		}
+		
+		if (level[line+1][row] == 'x') {
+			gravity = Gravity.DOWN;
+		}
+		
+		if (level[line][row+1] == 'x') {
+			gravity = Gravity.RIGHT;
+		}
+		
+		if (level[line][row-1] == 'x') {
+			gravity = Gravity.LEFT;
+		}
+		
+		return gravity;
+	}
+
+	private static Orientation getPiratePlateOrientationAndGravity(char[][] level, int line, int row) {
+		Orientation orientation = Orientation.Vertical; // default orientation
+		
+		if (level[line-1][row] == 'x' || level[line+1][row] == 'x') {
+			orientation = Orientation.Horizontal;
+		}
+		
+		return orientation;
+	}
 
 	/**
 	 *  This method will verify some basic properties of the given file (level) :

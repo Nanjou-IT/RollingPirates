@@ -28,9 +28,11 @@ public class Pirate {
 
 	public int speed = 5;
 
-	public Pirate(float x, float y, int playerCounter) {
+	public Pirate(float x, float y, Orientation o, Gravity g, int playerCounter) {
 		this.x = x;
 		this.y = y;
+		this.orientation = o;
+		this.gravity = g;
 		this.playerCounter = playerCounter;
 	}
 	
