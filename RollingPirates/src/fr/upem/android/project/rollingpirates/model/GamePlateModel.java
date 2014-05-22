@@ -2,14 +2,9 @@ package fr.upem.android.project.rollingpirates.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 
-import fr.upem.android.project.rollingpirates.view.LevelView;
-import android.graphics.Rect;
-import android.graphics.Path.Direction;
 import android.util.Log;
-import android.widget.Toast;
+import fr.upem.android.project.rollingpirates.view.LevelView;
 
 public class GamePlateModel {
 	
@@ -34,7 +29,12 @@ public class GamePlateModel {
 	
 	private final ArrayList<LevelView> views;
 	
+	private final int surfaceWidth;
+	private final int surfaceheight;
+	
 	public GamePlateModel(int cellWidth, int cellHeight, int surfaceWidth, int surfaceHeight) {
+		this.surfaceheight = surfaceHeight;
+		this.surfaceWidth = surfaceWidth;
 		float cellHNumber = (float)surfaceWidth / (float)cellWidth;   	// 1920 / 30 = 64
 		float cellVNumber = (float)surfaceHeight / (float)cellHeight; 	// 885 / 30 = 29.5
 		
@@ -79,7 +79,12 @@ public class GamePlateModel {
 	public ArrayList<Pirate> getPirates() {
 		return players;
 	}
-	
+	public int getSurfaceheight() {
+		return surfaceheight;
+	}
+	public int getSurfaceWidth() {
+		return surfaceWidth;
+	}
 	public void modelChanged() {
 		Log.d("GPM", "Model chnaged");
 		for (LevelView v : views) {
@@ -315,10 +320,11 @@ public class GamePlateModel {
 	private static void getLinePirates(GamePlateModel game, char[][] level,
 			float CELL_HEIGHT, float CELL_WIDTH, float x, float y, int line,
 			ArrayList<Pirate> pirates) {
-
+		
 		for (int row = 0; row < ROW; row += 1) { // 28
 			if (Pirate.isPirate(level[line][row])) {
-				pirates.add(new Pirate(CELL_WIDTH, CELL_HEIGHT , x, y));
+//				pirates.add(new Pirate(CELL_WIDTH, CELL_HEIGHT , x, y));
+				pirates.add(new Pirate(x, y, pirates.size()));
 				x += CELL_WIDTH;
 			} else {
 				x += CELL_WIDTH;

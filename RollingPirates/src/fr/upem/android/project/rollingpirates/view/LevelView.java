@@ -60,7 +60,6 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 //			break;
 		}
 		
-		
         holder.unlockCanvasAndPost(c);
 	}
 
@@ -108,11 +107,11 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		
 		i = 0;
-		paint.setColor(Color.GREEN);
 		ArrayList<Pirate> pirates = model.getPirates();
 		for (Pirate p : pirates) {
 			i += 1;
-			c.drawRect(p.getX(), p.getY(), p.getX() + p.getWidth(), p.getY() + p.getHeight(), paint);
+			p.setSkin(getContext());
+			p.draw(c);
 		}
 	}
 	

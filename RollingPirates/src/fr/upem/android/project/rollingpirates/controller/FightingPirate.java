@@ -11,7 +11,6 @@ public class FightingPirate implements Runnable {
 
 	private final GamePlateModel model;
 	private final Pirate pirate;
-	private int speed = 4;
 	
 	public FightingPirate(GamePlateModel model, Pirate pirate) {
 		this.model = model;
@@ -22,37 +21,44 @@ public class FightingPirate implements Runnable {
 	public void run() {
 		while (!Thread.interrupted()) {
 			try {
-				Thread.sleep(30000);
+				Thread.sleep(30);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 			}
 			
-			Log.d("FightingPirate", "Pirate -- Coords > " + pirate.toString());
+//			Log.d("FightingPirate", "Pirate -- Coords > " + pirate.toString());
+
+			boolean updated = false;
 			
 			ArrayList<Plate> hPlates = model.getHPlates();
 			for (Plate p : hPlates) {
 				if (p.isConnectedTo(pirate)) {
 //					Log.d("FightingPirate", "Pirate -- Connected to horizontal > " + p.toString());
-					pirate.x += speed;
+					
+					pirate.update(model);
+					
+					updated = true;
 					break;
 				}
-				Log.d("FightingPirate", "Plate > " + p.toString());
+//				Log.d("FightingPirate", "Plate > " + p.toString());
 			}
-			
 			
 			ArrayList<Plate> vPlates = model.getVPlates();
-			for (Plate p : vPlates) {
-				if (p.isConnectedTo(pirate)) {
+			for (Plate p1 : vPlates) {
+				if (p1.isConnectedTo(pirate)) {
 //					Log.d("FightingPirate", "Pirate -- Connected to vertical > " + p.toString());
-					pirate.y += speed;
+					
+					pirate.update(model);
+					
+					updated = true;
 					break;
 				}
-				Log.d("FightingPirate", "Plate > " + p.toString());
+//				Log.d("FightingPirate", "Plate > " + p1.toString());
 			}
 			
-			
-			model.updateModel();
+			if (updated) {
+				model.updateModel();
+			}
 		}
 	}
-
 }
