@@ -38,7 +38,6 @@ public class FightingPirate implements Runnable {
 				}
 				Log.d("FightingPirate", "Plate > " + p.toString());
 			}
-			Log.d("FightingPirate", "Horizotal plates > " + hPlates.size());
 			
 			
 			ArrayList<Plate> vPlates = model.getVPlates();
@@ -50,7 +49,6 @@ public class FightingPirate implements Runnable {
 				}
 				Log.d("FightingPirate", "Plate > " + p.toString());
 			}
-			Log.d("FightingPirate", "Vertical plates > " + vPlates.size());
 			
 			
 			model.updateModel();

@@ -120,12 +120,12 @@ public class GamePlateModel {
 		float y = 0;
 		for (int line = 0; line < LINE; line += 1) { // 9
 			ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
-			getLineObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, line, obstacles, list);
+			boolean plateBuilt = getLineObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, line, obstacles, list);
 			
 			x = 0;
 			y += CELL_HEIGHT; // New line : increment from ratio grid / screen
 			
-			if (!obstacles.isEmpty()) {
+			if (!obstacles.isEmpty() && !plateBuilt) {
 				buildPlate(list, obstacles, line);
 			}
 		}
@@ -133,8 +133,9 @@ public class GamePlateModel {
 		return list;
 	}
 
-	private static void getLineObstacles(GamePlateModel game, char[][] level, float CELL_HEIGHT, 
+	private static boolean getLineObstacles(GamePlateModel game, char[][] level, float CELL_HEIGHT, 
 			float CELL_WIDTH, float x, float y, int line, ArrayList<Obstacle> obstacles, ArrayList<Plate> list) {
+		boolean plateBuilt = false;
 		for (int row = 0; row < ROW; row += 1) { // 28
 
 			switch (level[line][row]) {
@@ -177,10 +178,12 @@ public class GamePlateModel {
 				}
 				
 				buildPlate(list, obstacles, line);
+				plateBuilt = true;
 				obstacles = new ArrayList<Obstacle>();
 				break;
 			}
 		}
+		return plateBuilt;
 	}
 	
 	
@@ -208,7 +211,7 @@ public class GamePlateModel {
 			
 			ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
 			
-			getRowObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, row, obstacles, list);
+			boolean plateBuilt = getRowObstacles(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, row, obstacles, list);
 			
 			x += CELL_WIDTH;
 			y = CELL_HEIGHT;
@@ -216,7 +219,7 @@ public class GamePlateModel {
 				y = CELL_HEIGHT;
 			}
 			
-			if (!obstacles.isEmpty()) {
+			if (!obstacles.isEmpty() && !plateBuilt) {
 				buildPlate(list, obstacles, row);
 			}
 		}
@@ -224,9 +227,10 @@ public class GamePlateModel {
 		return list;
 	}
 
-	private static void getRowObstacles(GamePlateModel game, char[][] level,
+	private static boolean getRowObstacles(GamePlateModel game, char[][] level,
 			float CELL_HEIGHT, float CELL_WIDTH, float x, float y, int row,
 			ArrayList<Obstacle> obstacles, ArrayList<Plate> list) {
+		boolean plateBuilt = false;
 		for (int line = 0; line < LINE-1; line += 1) { // 9
 			
 			switch (level[line][row]) {
@@ -263,10 +267,12 @@ public class GamePlateModel {
 					}
 					
 					buildPlate(list, obstacles, line);
+					plateBuilt = true;
 					obstacles = new ArrayList<Obstacle>();
 					break;
 			}
 		}
+		return plateBuilt;
 	}
 	
 	
