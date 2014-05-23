@@ -36,7 +36,7 @@ public class Pirate {
 		this.playerCounter = playerCounter;
 	}
 	
-	public void setSkin(Context c){
+	public void setSkin(Context c) {
 		if (playerCounter == PLAYER_ONE) {
 			bmp = BitmapFactory.decodeResource(c.getResources(),R.drawable.bad2);
 		} else if (playerCounter == PLAYER_TWO) {
@@ -48,11 +48,11 @@ public class Pirate {
 
 	}
 	
-	public void setGravity(Gravity gravity){
+	public void setGravity(Gravity gravity) {
 		this.gravity = gravity;
 	}
 	
-	public void setOrientation(Orientation orientation){
+	public void setOrientation(Orientation orientation) {
 		this.orientation = orientation;
 	}
 	
@@ -73,7 +73,7 @@ public class Pirate {
 		x += speed;
 	}
 	
-	public Bitmap getBitmap(){
+	public Bitmap getBitmap() {
 		return bmp;
 	}
 	
@@ -101,11 +101,11 @@ public class Pirate {
 		this.height = height;
 	}
 	
-	public void setRunning(boolean running){
+	public void setRunning(boolean running) {
 		this.running = running;
 	}
 
-	public void draw(Canvas c){
+	public void draw(Canvas c) {
 		int srcX =(int) getWidth();
 		int srcY =(int) getHeight();
 		Rect src = new Rect(srcX, srcY, srcX + (int)getWidth(), srcY + (int)getHeight());
