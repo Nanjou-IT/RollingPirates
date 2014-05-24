@@ -6,6 +6,7 @@ import java.util.Arrays;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
+import fr.upem.android.project.rollingpirates.controller.LevelThread;
 import fr.upem.android.project.rollingpirates.view.LevelView;
 
 public class GamePlateModel {
@@ -27,7 +28,7 @@ public class GamePlateModel {
 	private ArrayList<Pirate> players;
 	private final ArrayList<Bonus> bonuses;
 	
-	private final ArrayList<LevelView> views;
+	private final ArrayList<LevelThread> views;
 	
 	private final RectF leftScreen;
 	private final RectF rightScreen;
@@ -58,7 +59,7 @@ public class GamePlateModel {
 		
 		players = new ArrayList<Pirate>();
 		bonuses = new ArrayList<Bonus>();
-		views = new ArrayList<LevelView>();
+		views = new ArrayList<LevelThread>();
 		
 		leftScreen = new RectF(CELL_WIDTH * widthRatio, CELL_HEIGHT * heightRatio, surfaceWidth/2, surfaceHeight - (CELL_HEIGHT * heightRatio));
 		rightScreen = new RectF(surfaceWidth/2, CELL_HEIGHT * heightRatio, surfaceWidth - (CELL_WIDTH * widthRatio), surfaceHeight - (CELL_HEIGHT * heightRatio));
@@ -115,29 +116,33 @@ public class GamePlateModel {
 		return surfaceWidth;
 	}
 	
-	public void modelChanged(Pirate p) {
+	public void modelChanged() {
 //		Log.d("GPM", "Model changed");
-		for (LevelView v : views) {
+		for (LevelThread v : views) {
 //			Log.d("GPM", "redraw model for a view !");
-			v.redrawModel(p);
+			v.redrawModel();
 		}
 	}
 
-	public void register(LevelView levelView) {
+//	public void register(LevelView levelView) {
+//		views.add(levelView);
+//	}
+	
+	public void register(LevelThread levelView) {
 		views.add(levelView);
 	}
 
-	public void unregister(LevelView levelView) {
+	public void unregister(LevelThread levelView) {
 		views.remove(levelView);
 	}
 	
 	/**
 	 *  Function used outside of the model for ANY update.
 	 */
-	public void updateModel(Pirate p) {
+	public void updateModel() {
 		// TODO : Model modifications
 		
-		modelChanged(p);
+		modelChanged();
 	}
 	
 	

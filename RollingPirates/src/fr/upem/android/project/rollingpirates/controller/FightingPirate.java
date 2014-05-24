@@ -12,6 +12,7 @@ public class FightingPirate implements Runnable {
 
 	private final GamePlateModel model;
 	private final Pirate pirate;
+	private final long FPS = 20;
 	
 	public FightingPirate(GamePlateModel model, Pirate pirate) {
 		this.model = model;
@@ -20,49 +21,50 @@ public class FightingPirate implements Runnable {
 	
 	@Override
 	public void run() {
+		long ticksPS = 1000 / FPS; // 10
+        long startTime;
+        long sleepTime;
+        
 		while (!Thread.interrupted()) {
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//			}
-//			
-//			Log.d("FightingPirate", "Pirate -- Coords > " + pirate.toString());
+			startTime = System.currentTimeMillis();
 
 			boolean updated = false;
 			
-			ArrayList<Plate> hPlates = model.getHPlates();
-			int sizeHplates = hPlates.size();
-			for (int i = 0; i < sizeHplates; i+=1) {
-				Plate p = hPlates.get(i);
-				if (p.isConnectedTo(pirate)) {
-//					Log.d("FightingPirate", "Pirate -- Connected to horizontal > " + p.toString());
-					
-					pirate.update(model);
-					
-					updated = true;
-					break;
-				}
-//				Log.d("FightingPirate", "Plate > " + p.toString());
-			}
 			
 			ArrayList<Plate> vPlates = model.getVPlates();
 			int sizeVplates = vPlates.size();
 			for (int i = 0; i < sizeVplates; i+=1) {
 				Plate p = vPlates.get(i);
 				if (p.isConnectedTo(pirate)) {
-//					Log.d("FightingPirate", "Pirate -- Connected to horizontal > " + p.toString());
-					
 					pirate.update(model);
-					
 					updated = true;
 					break;
 				}
-//				Log.d("FightingPirate", "Plate > " + p.toString());
 			}
 			
+			ArrayList<Plate> hPlates = model.getHPlates();
+			int sizeHplates = hPlates.size();
+			for (int i = 0; i < sizeHplates; i+=1) {
+				Plate p = hPlates.get(i);
+				if (p.isConnectedTo(pirate)) {
+					pirate.update(model);
+					updated = true;
+					break;
+				}
+			}
+			
+			
+			
 //			if (updated) {
-				model.updateModel(pirate);
+//				model.updateModel();
+				sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
+				try {
+					if (sleepTime > 0) {
+						Thread.sleep(sleepTime);
+					} else {
+						Thread.sleep(10);
+					}
+				} catch (Exception e) {}
 //			}
 		}
 	}

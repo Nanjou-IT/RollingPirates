@@ -1,6 +1,8 @@
 package fr.upem.android.project.rollingpirates.model;
 
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -31,12 +33,12 @@ public class Pirate {
 	private Bitmap bmp;
 	private boolean running;
 
-	private final Rect pirateRect;
+	private RectF pirateRect;
 	private Gravity gravity;
 	private Orientation orientation;
 
 	private int lives = 3;
-	private int speed = 1;
+	private int speed = 3;
 
 	public Pirate(float x, float y, Orientation o, Gravity g, int playerCounter) {
 		this.x = x;
@@ -47,7 +49,7 @@ public class Pirate {
 		this.paint = new Paint();
 		this.paint.setTextSize(42);
 		this.paint.setColor(Color.GREEN);
-		pirateRect = new Rect((int)x, (int)y, (int)x+ (int)width, (int)y + (int)height);
+		pirateRect = new RectF(x, y, x+ width, y + height);
 	}
 	
 	public void setSkin(Context c) {
@@ -73,7 +75,7 @@ public class Pirate {
 		return Character.isDigit(c);
 	}
 	
-	public Rect getPirateRect() {
+	public RectF getPirateRect() {
 		return pirateRect;
 	}
 	
@@ -121,6 +123,7 @@ public class Pirate {
 		RectF dst = new RectF(getX(), getY(), getX() + getWidth(), getY() + getHeight());
 		c.drawBitmap(getBitmap(), src, dst, null);
 		
+		// Print lives counter
 		int livesX = 30, livesY = 45;
 		if (playerCounter == PLAYER_TWO) {
 			livesX = c.getWidth() - 200;
@@ -128,10 +131,107 @@ public class Pirate {
 		c.drawText("Lives : " + lives, livesX, livesY, paint);
 	}
 	
+//	public void jump2(GamePlateModel model) {
+//		if (orientation == Orientation.Vertical) {
+//			RectF collisionRect = new RectF(x + getWidth(), y + speed, getWidth(), getHeight());
+//			if (speed + y <= p.getMinY()) {
+//				y = p.getMinY();
+//				if(checkForCollision(model,collisionRect)){
+//					changeDirection();
+//					return true;
+//				}
+//			} 
+//			if (speed + y >= p.getMaxY() && checkForCollision(model,collisionRect)) {
+//				y = p.getMaxY()-this.height;
+//				if(checkForCollision(model,collisionRect)){
+//					changeDirection();
+//					return true;
+//				}
+//			}
+//			return false;
+//		} else if (orientation == Orientation.Horizontal){
+//			RectF collisionRect = new RectF(x + getWidth() + speed, y, getWidth(), getHeight());
+//			if (speed + x <= p.getMinX() && checkForCollision(model,collisionRect)) {
+//				x = p.getMinX();
+//				if(checkForCollision(model,collisionRect)){
+//					changeDirection();
+//					return true;
+//				}
+//			}
+//			if (speed + x >= p.getMaxX() && checkForCollision(model,collisionRect)) {
+//				x = p.getMaxX()-this.width;
+//				if(checkForCollision(model,collisionRect)){
+//					changeDirection();
+//					return true;
+//				}
+//			}
+//			return false;
+//		}
+//	}
 
-	public void jump() {
+	public void jump(GamePlateModel model) {
 		Log.d("Pirate", "JUMP");
-		y += 3;
+		int i = 0;
+		while (true) {
+			if (gravity == Gravity.TOP) {
+				y += 2;
+				x += 1;
+				if (i == 10) {
+					gravity = Gravity.DOWN;
+				}
+			}
+			if (gravity == Gravity.DOWN) {
+				y -= 2;
+				x += 1;
+			}
+			
+			
+			pirateRect = new RectF(x, y, x + width, y + height);
+			
+			ArrayList<Plate> hPlates = model.getHPlates();
+			int sizeHplates = hPlates.size();
+			for (int j = 0; j < sizeHplates; j+=1) {
+				Plate p = hPlates.get(j);
+				if (pirateRect.intersect(p.getPlateRect())) {
+					if (pirateRect.bottom > p.getPlateRect().bottom) { // from top
+						y = p.getPlateRect().top - height;
+						gravity = Gravity.DOWN;
+					} else {
+						y = p.getPlateRect().bottom;
+						gravity = Gravity.TOP;
+					}
+					Log.d("Pirate", "CONNECTED HORIZONTAL");
+					
+					return;
+//					break;
+				}
+			}
+			
+			ArrayList<Plate> vPlates = model.getVPlates();
+			int sizeVplates = vPlates.size();
+			for (int j = 0; j < sizeVplates; j+=1) {
+				Plate p = hPlates.get(j);
+				if (pirateRect.intersect(p.getPlateRect())) {
+					if (pirateRect.left < p.getPlateRect().left) { // from left
+						x = p.getPlateRect().left - width;
+					} else {
+						x = p.getPlateRect().right;
+					}
+					
+					Log.d("Pirate", "CONNECTED VERTICAL");
+					return;
+//					break;
+				}
+			}
+			try {
+				Thread.sleep(40);
+			} catch (InterruptedException e) {
+				//
+			}
+//			update(model);
+			model.updateModel();
+			i += 1;
+		}
 	}
 	
 	public void update(GamePlateModel model) {
@@ -141,9 +241,13 @@ public class Pirate {
 		
 		if (orientation == Orientation.Vertical) {
 			y += speed;
+			pirateRect = new RectF(x, y, x+ width, y + height);
+			model.updateModel();
 			return;
 		}
 		
 		x += speed;
+		pirateRect = new RectF(x, y, x+ width, y + height);
+		model.updateModel();
 	}
 }

@@ -63,6 +63,10 @@ public class Plate {
 		return plateRect;
 	}
 	
+	public float getMaxY() {
+		return maxY;
+	}
+	
 	public ArrayList<Obstacle> getObstacles() {
 		return obstacles;
 	}
