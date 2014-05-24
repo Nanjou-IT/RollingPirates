@@ -2,6 +2,9 @@ package fr.upem.android.project.rollingpirates.model;
 
 import java.util.ArrayList;
 
+import android.graphics.Rect;
+import android.graphics.RectF;
+
 enum Gravity { LEFT, TOP, RIGHT, DOWN, ALL; }
 
 enum Orientation { Horizontal, Vertical; }
@@ -10,6 +13,7 @@ public class Plate {
 	private final ArrayList<Obstacle> obstacles;
 	private final Gravity g;
 	private final Orientation o;
+	private final RectF plateRect;
 	private final float minX;
 	private final float maxX;
 	private final float minY;
@@ -47,10 +51,16 @@ public class Plate {
 			}
 		}
 		
-		maxX = max_x;  
+		maxX = max_x;
 		minX = min_x;
 		maxY = max_y;
 		minY = min_y;
+		
+		plateRect = new RectF(min_x, min_y, max_x, max_y);
+	}
+	
+	public RectF getPlateRect() {
+		return plateRect;
 	}
 	
 	public ArrayList<Obstacle> getObstacles() {

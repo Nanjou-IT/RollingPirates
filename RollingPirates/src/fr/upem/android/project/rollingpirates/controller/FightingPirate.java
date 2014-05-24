@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.util.Log;
 import fr.upem.android.project.rollingpirates.model.GamePlateModel;
+import fr.upem.android.project.rollingpirates.model.Obstacle;
 import fr.upem.android.project.rollingpirates.model.Pirate;
 import fr.upem.android.project.rollingpirates.model.Plate;
 
@@ -20,18 +21,20 @@ public class FightingPirate implements Runnable {
 	@Override
 	public void run() {
 		while (!Thread.interrupted()) {
-			try {
-				Thread.sleep(30);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-			}
-			
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//			}
+//			
 //			Log.d("FightingPirate", "Pirate -- Coords > " + pirate.toString());
 
 			boolean updated = false;
 			
 			ArrayList<Plate> hPlates = model.getHPlates();
-			for (Plate p : hPlates) {
+			int sizeHplates = hPlates.size();
+			for (int i = 0; i < sizeHplates; i+=1) {
+				Plate p = hPlates.get(i);
 				if (p.isConnectedTo(pirate)) {
 //					Log.d("FightingPirate", "Pirate -- Connected to horizontal > " + p.toString());
 					
@@ -44,21 +47,23 @@ public class FightingPirate implements Runnable {
 			}
 			
 			ArrayList<Plate> vPlates = model.getVPlates();
-			for (Plate p1 : vPlates) {
-				if (p1.isConnectedTo(pirate)) {
-//					Log.d("FightingPirate", "Pirate -- Connected to vertical > " + p.toString());
+			int sizeVplates = vPlates.size();
+			for (int i = 0; i < sizeVplates; i+=1) {
+				Plate p = vPlates.get(i);
+				if (p.isConnectedTo(pirate)) {
+//					Log.d("FightingPirate", "Pirate -- Connected to horizontal > " + p.toString());
 					
 					pirate.update(model);
 					
 					updated = true;
 					break;
 				}
-//				Log.d("FightingPirate", "Plate > " + p1.toString());
+//				Log.d("FightingPirate", "Plate > " + p.toString());
 			}
 			
-			if (updated) {
-				model.updateModel();
-			}
+//			if (updated) {
+				model.updateModel(pirate);
+//			}
 		}
 	}
 }

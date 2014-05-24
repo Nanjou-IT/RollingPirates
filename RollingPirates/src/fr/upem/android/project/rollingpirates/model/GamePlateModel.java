@@ -3,6 +3,8 @@ package fr.upem.android.project.rollingpirates.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 import fr.upem.android.project.rollingpirates.view.LevelView;
 
@@ -11,7 +13,6 @@ public class GamePlateModel {
 	private final static String TAG = "GamePlateModel";
 	
 	private final static int ROW = 28;
-	private final static int MIN_LINE = 9;
 	private final static int LINE = 15;
 	
 	private final float CELL_WIDTH;
@@ -22,12 +23,14 @@ public class GamePlateModel {
 	
 	private ArrayList<Plate> hplates;
 	private ArrayList<Plate> vplates;
-	
 	private ArrayList<Plate> plates;
 	private ArrayList<Pirate> players;
 	private final ArrayList<Bonus> bonuses;
 	
 	private final ArrayList<LevelView> views;
+	
+	private final RectF leftScreen;
+	private final RectF rightScreen;
 	
 	private final int surfaceWidth;
 	private final int surfaceheight;
@@ -56,8 +59,11 @@ public class GamePlateModel {
 		players = new ArrayList<Pirate>();
 		bonuses = new ArrayList<Bonus>();
 		views = new ArrayList<LevelView>();
+		
+		leftScreen = new RectF(CELL_WIDTH * widthRatio, CELL_HEIGHT * heightRatio, surfaceWidth/2, surfaceHeight - (CELL_HEIGHT * heightRatio));
+		rightScreen = new RectF(surfaceWidth/2, CELL_HEIGHT * heightRatio, surfaceWidth - (CELL_WIDTH * widthRatio), surfaceHeight - (CELL_HEIGHT * heightRatio));
 	}
-	
+
 	public static GamePlateModel init(char[][] level, int surfaceWidth, int surfaceHeight) {
 		GamePlateModel game = new GamePlateModel(30, 30, surfaceWidth, surfaceHeight);
 		
@@ -79,17 +85,41 @@ public class GamePlateModel {
 	public ArrayList<Pirate> getPirates() {
 		return players;
 	}
+	
+	/**
+	 * Gives a pirate !
+	 * 
+	 * @param pirateNumber : from 1 to n
+	 * @return pirate if exists or null
+	 */
+	public Pirate getPirate(int pirateNumber) {
+		if (pirateNumber > players.size() || pirateNumber <= 0) {
+			return null;
+		}
+		return players.get(pirateNumber);
+	}
+	
+	public RectF getRightScreen() {
+		return rightScreen;
+	}
+	
+	public RectF getLeftScreen() {
+		return leftScreen;
+	}
+	
 	public int getSurfaceheight() {
 		return surfaceheight;
 	}
+	
 	public int getSurfaceWidth() {
 		return surfaceWidth;
 	}
-	public void modelChanged() {
-		Log.d("GPM", "Model chnaged");
+	
+	public void modelChanged(Pirate p) {
+//		Log.d("GPM", "Model changed");
 		for (LevelView v : views) {
-			Log.d("GPM", "redraw model for a view !");
-			v.redrawModel();
+//			Log.d("GPM", "redraw model for a view !");
+			v.redrawModel(p);
 		}
 	}
 
@@ -104,10 +134,10 @@ public class GamePlateModel {
 	/**
 	 *  Function used outside of the model for ANY update.
 	 */
-	public void updateModel() {
+	public void updateModel(Pirate p) {
 		// TODO : Model modifications
 		
-		modelChanged();
+		modelChanged(p);
 	}
 	
 	

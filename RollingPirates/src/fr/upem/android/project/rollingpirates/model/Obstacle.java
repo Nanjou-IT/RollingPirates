@@ -1,10 +1,10 @@
 package fr.upem.android.project.rollingpirates.model;
 
 public class Obstacle {
-	private final float width;
-	private final float height;
-	private final float x; // point at left
-	private final float y; // point at top
+	public final float width;
+	public final float height;
+	public final float x; // point at left
+	public final float y; // point at top
 
 	public Obstacle(float width, float height, float x, float y) {
 		this.width = width;

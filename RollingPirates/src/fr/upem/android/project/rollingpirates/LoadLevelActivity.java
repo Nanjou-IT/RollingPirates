@@ -26,7 +26,7 @@ public class LoadLevelActivity extends Activity {
 		} catch (IOException e) {
 			Log.e(TAG, "Error : No folder 'assets/levels' was founded.");
 		}
-        
+
         if (levelList != null && levelList.length != 0) {
         	if (levelList.length < gameLevel) {
         		gameLevel = levelList.length-1; // No more levels, select the last one
