@@ -2,6 +2,7 @@ package fr.upem.android.project.rollingpirates.model;
 
 
 import java.util.ArrayList;
+import java.util.zip.CheckedOutputStream;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -55,11 +56,11 @@ public class Pirate {
 	
 	public void setSkin(Context c) {
 		if (playerCounter == PLAYER_ONE) {
-			bmp = BitmapFactory.decodeResource(c.getResources(),R.drawable.bad2);
+			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.bad2);
 		} else if (playerCounter == PLAYER_TWO) {
-			bmp = BitmapFactory.decodeResource(c.getResources(),R.drawable.bad3);
+			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.bad3);
 		}
-		
+		 
 		setWidth(bmp.getWidth()/BMP_COLUMNS);
 		setHeight(bmp.getHeight()/BMP_ROWS);
 	}
@@ -124,8 +125,11 @@ public class Pirate {
 	public void draw(Canvas c) {
 		float srcX = getWidth();
 		float srcY = getHeight();
-		Rect src = new Rect((int)srcX, (int)srcY, (int)srcX + (int)getWidth(), (int)srcY + (int)getHeight());
+		
+		// TODO : Handle this properly
+		Rect src = new Rect((int)srcX, (int)0, (int)srcX + (int)getWidth(), (int)getHeight());
 		RectF dst = new RectF(getX(), getY(), getX() + getWidth(), getY() + getHeight());
+		
 		c.drawBitmap(getBitmap(), src, dst, null);
 		
 		// Print lives counter
@@ -133,6 +137,8 @@ public class Pirate {
 		if (playerCounter == PLAYER_TWO) {
 			livesX = c.getWidth() - 200;
 		}
+		
+		paint.setColor(Color.GREEN);
 		c.drawText("Lives : " + lives, livesX, livesY, paint);
 		Log.d("Pirates", "Lives are drawed");
 	}
@@ -156,6 +162,7 @@ public class Pirate {
 			}
 			
 			
+			// TODO : Jump 'return' not handled in some cases.. 
 			if (gravity == Gravity.TOP) {
 				y += 2;
 				if (directionRight) {
@@ -214,18 +221,36 @@ public class Pirate {
 				if (pirateRect.intersect(p.getPlateRect())) {
 					Log.d("Pirate", "CONNECTED HORIZONTAL");
 					
-//					Log.d("Pirate", "y> " + (y+height));
 					Log.d("Pirate", "Pirate.Bottom > Plate.Bottom ?   " + pirateRect.bottom  + ">" + p.getPlateRect().bottom); 
 					if ((y+height) < p.getPlateRect().bottom) { // from top
 						y = p.getPlateRect().top - height;
+						
 						gravity = Gravity.DOWN;
 						orientation = Orientation.Horizontal;
 						Log.d("Pirate", "C1 : YES");
 					} else {
 						y = p.getPlateRect().bottom;
+						
 						gravity = Gravity.TOP;
 						orientation = Orientation.Horizontal;
 						Log.d("Pirate", "C2 : NO");
+					}
+					
+					// Setting up connected && out of bounds patch
+					if (x+width >= p.getMaxX()) {
+						x = p.getMaxX() - width;
+						Log.d("Pirate", "HORIZONTAL | RIGHT  : X > bounds");
+						if (speed > 0) {
+							speed *= -1;
+						}
+					}
+					
+					if (x <= p.getMinX()) {
+						x = p.getMinX();
+						Log.d("Pirate", "HORIZONTAL | LEFT  : X < bounds");
+						if (speed < 0) {
+							speed *= -1;
+						}
 					}
 					
 					collision = true;
@@ -251,7 +276,24 @@ public class Pirate {
 						orientation = Orientation.Vertical;
 						Log.d("Pirate", "C2 : NO");
 					}
-
+					
+					if (y <= p.getMinY()) {
+						y = p.getMinY();
+						Log.d("Pirate", "VERTICAL | TOP  : Y > bounds   speed=" + speed);
+						// change direction
+						if (speed < 0) {
+							speed *= -1;
+						}
+					}
+					
+					if (y+height >= p.getMaxY()) {
+						y = p.getMaxY() - height;
+						Log.d("Pirate", "VERTICAL | BOTTOM  : Y < bounds");
+						if (speed > 0) {
+							speed *= -1;
+						}
+					}
+					
 					collision = true;
 				}
 			}
@@ -266,7 +308,7 @@ public class Pirate {
 		}
 	}
 	
-	public void update(GamePlateModel model) {
+	public void move(GamePlateModel model) {
 		boolean isObstacle = false;
 		
 		RectF projectedPirate;
@@ -277,6 +319,7 @@ public class Pirate {
 				projectedPirate = new RectF(x, y, x, y + height);
 			}
 		} else {
+			Log.d("Pirate", "Call to move in vertical !  speed" + speed);
 			if (speed > 0) { // moving to down
 				projectedPirate = new RectF(x, y + height, x + width, y + height);
 			} else { // moving to up
@@ -306,13 +349,6 @@ public class Pirate {
 			if (RectF.intersects(plateRect, projectedPirate)) {
 				isObstacle = true;
 				Log.d("Pirate", "Horizontal Obstacle");
-				
-				SurfaceHolder holder = model.getHolder();
-				Canvas lockCanvas = holder.lockCanvas();
-				paint.setColor(Color.RED);
-				lockCanvas.drawRect(pirateRect, paint);
-				holder.unlockCanvasAndPost(lockCanvas);
-				
 				break;
 			}
 		}

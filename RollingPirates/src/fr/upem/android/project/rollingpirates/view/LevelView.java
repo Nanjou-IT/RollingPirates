@@ -7,16 +7,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import fr.upem.android.project.rollingpirates.controller.FightingPirate;
 import fr.upem.android.project.rollingpirates.controller.LevelController;
-import fr.upem.android.project.rollingpirates.controller.LevelThread;
 import fr.upem.android.project.rollingpirates.model.GamePlateModel;
 import fr.upem.android.project.rollingpirates.model.Obstacle;
 import fr.upem.android.project.rollingpirates.model.Pirate;
@@ -28,8 +24,8 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 	private SurfaceHolder holder;
 	private final char[][] grid;
 	private GamePlateModel model = null;
-	private LevelThread levelThread = null;
 	private LevelController levelController;
+	private boolean isGameStarted = false;
 	
 	public LevelView(Context context, char[][] grid) {
 		super(context);
@@ -39,6 +35,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		holder = getHolder();
 		holder.addCallback(this);
 		setFocusable(true);
+		setWillNotDraw(false);
 	}
 
 	@Override
@@ -48,11 +45,11 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
+		Log.d("LevelView", "surfaceCreated()");
 		Rect surfaceFrame = holder.getSurfaceFrame();
 		model = GamePlateModel.init(grid, surfaceFrame.width(), surfaceFrame.height());
-		model.setHolder(holder);
-		levelThread = new LevelThread(holder, model, getContext());
-		levelController = new LevelController(model, levelThread);
+		model.register(this);
+		levelController = new LevelController(model);
 		
 		ArrayList<Pirate> pirates = model.getPirates();
 		for (int i = 0; i < pirates.size(); i+=1) {
@@ -60,12 +57,58 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 			pirate.setSkin(getContext());
 		}
 		
+//		Canvas c = holder.lockCanvas();
+//		displayPreStartInit(c);
+//		holder.unlockCanvasAndPost(c);
+	}
+	
+	
+	@Override
+	protected void onDraw(Canvas canvas) {
+		super.onDraw(canvas);
+		Log.d("LevelView", "onDraw() from LevelView");
+
+		canvas.drawARGB(255, 255, 255, 255);
+
+    	paint.setColor(Color.BLUE);
+		ArrayList<Plate> vplates = model.getVPlates();
+		int sizeVplates = vplates.size();
+		for (int i = 0; i < sizeVplates; i+=1) {
+			ArrayList<Obstacle> obstacles = vplates.get(i).getObstacles();
+			
+			int sizeObstacle = obstacles.size();
+			for (int j = 0; j < sizeObstacle; j+=1) {
+				Obstacle o = obstacles.get(j);
+				canvas.drawRect(o.x, o.y, o.x + o.width, o.y + o.height, paint);
+			}
+		}
+		
+		paint.setColor(Color.RED);
+		ArrayList<Plate> hplates = model.getHPlates();
+		int sizeHplates = hplates.size();
+		for (int i = 0; i < sizeHplates; i+=1) {
+			ArrayList<Obstacle> obstacles = hplates.get(i).getObstacles();
+			
+			int sizeObstacle = obstacles.size();
+			for (int j = 0; j < sizeObstacle; j+=1) {
+				Obstacle o = obstacles.get(j);
+				canvas.drawRect(o.x, o.y, o.x + o.width, o.y + o.height, paint);
+			}
+		}
+		
+		ArrayList<Pirate> pirates = model.getPirates();
+		for (int i = 0; i < pirates.size(); i+=1) {
+			Pirate p = pirates.get(i);
+			p.draw(canvas);
+		}
+	}
+	
+	public void drawAtBeginning() {
 		Canvas c = holder.lockCanvas();
-		levelThread.draw(c);
 		displayPreStartInit(c);
 		holder.unlockCanvasAndPost(c);
 	}
-
+	
 	private void displayPreStartInit(Canvas c) {
 		Rect surfaceFrame = holder.getSurfaceFrame();
 		float exactCenterX = surfaceFrame.exactCenterX();
@@ -97,16 +140,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		boolean retry = true;
-		levelThread.setRunning(false);
-		levelThread.interrupt();
-		while (retry) {
-			try {
-				levelThread.join();
-				retry = false;
-			} catch (InterruptedException e) {
-			}
-		}
+		model.unregister(this);
 		model = null;
 	}
 

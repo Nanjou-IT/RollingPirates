@@ -3,11 +3,9 @@ package fr.upem.android.project.rollingpirates.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import fr.upem.android.project.rollingpirates.controller.LevelThread;
 import fr.upem.android.project.rollingpirates.view.LevelView;
 
 public class GamePlateModel {
@@ -29,7 +27,7 @@ public class GamePlateModel {
 	private ArrayList<Pirate> players;
 	private final ArrayList<Bonus> bonuses;
 	
-	private final ArrayList<LevelThread> views;
+	private final ArrayList<LevelView> views;
 	
 	private final RectF leftScreen;
 	private final RectF rightScreen;
@@ -37,8 +35,6 @@ public class GamePlateModel {
 	private final int surfaceWidth;
 	private final int surfaceheight;
 
-	private SurfaceHolder holder;
-	
 	public GamePlateModel(int cellWidth, int cellHeight, int surfaceWidth, int surfaceHeight) {
 		this.surfaceheight = surfaceHeight;
 		this.surfaceWidth = surfaceWidth;
@@ -62,7 +58,7 @@ public class GamePlateModel {
 		
 		players = new ArrayList<Pirate>();
 		bonuses = new ArrayList<Bonus>();
-		views = new ArrayList<LevelThread>();
+		views = new ArrayList<LevelView>();
 		
 		leftScreen = new RectF(CELL_WIDTH * widthRatio, CELL_HEIGHT * heightRatio, surfaceWidth/2, surfaceHeight - (CELL_HEIGHT * heightRatio));
 		rightScreen = new RectF(surfaceWidth/2, CELL_HEIGHT * heightRatio, surfaceWidth - (CELL_WIDTH * widthRatio), surfaceHeight - (CELL_HEIGHT * heightRatio));
@@ -120,22 +116,16 @@ public class GamePlateModel {
 	}
 	
 	public void modelChanged() {
-//		Log.d("GPM", "Model changed");
-		for (LevelThread v : views) {
-//			Log.d("GPM", "redraw model for a view !");
-			v.redrawModel();
+		for (LevelView v : views) {
+			v.postInvalidate();
 		}
 	}
-
-//	public void register(LevelView levelView) {
-//		views.add(levelView);
-//	}
 	
-	public void register(LevelThread levelView) {
+	public void register(LevelView levelView) {
 		views.add(levelView);
 	}
 
-	public void unregister(LevelThread levelView) {
+	public void unregister(LevelView levelView) {
 		views.remove(levelView);
 	}
 	
@@ -546,13 +536,5 @@ public class GamePlateModel {
 			}
 		}
 		
-	}
-	
-	public SurfaceHolder getHolder() {
-		return holder;
-	}
-	
-	public void setHolder(SurfaceHolder holder) {
-		this.holder = holder;
 	}
 }

@@ -13,15 +13,13 @@ public class LevelController {
 	
 	private boolean gameStarted = false;
 	private final GamePlateModel model;
-	private final LevelThread levelThread;
 	private Point player1 = null; 
 	private Point player2 = null;
 	private final FightingPirate[] fightingPirates;
 	private final Thread[] fightingPiratesWorkers;
 	
-	public LevelController(GamePlateModel model, LevelThread levelThread) {
+	public LevelController(GamePlateModel model) {
 		this.model = model;
-		this.levelThread = levelThread;
 		
 		ArrayList<Pirate> pirates = model.getPirates();
 		this.fightingPirates = new FightingPirate[pirates.size()];
@@ -169,8 +167,5 @@ public class LevelController {
 		for (int i = 0; i < fightingPirates.length; i+=1) {
 			fightingPiratesWorkers[i].start();
 		}
-		
-		levelThread.setRunning(true);
-		levelThread.start();
 	}
 }

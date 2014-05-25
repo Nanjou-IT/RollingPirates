@@ -67,6 +67,18 @@ public class Plate {
 		return maxY;
 	}
 	
+	public float getMaxX() {
+		return maxX;
+	}
+	
+	public float getMinX() {
+		return minX;
+	}
+	
+	public float getMinY() {
+		return minY;
+	}
+	
 	public ArrayList<Obstacle> getObstacles() {
 		return obstacles;
 	}
@@ -90,6 +102,7 @@ public class Plate {
 		return sb.toString();
 	}
 
+	// TODO : problem when a player is on the top/bot left/right edge of the plate (square angle)  
 	public boolean isConnectedTo(Pirate pirate) {
 		if (((pirate.x + pirate.width) == minX || pirate.x == maxX) && 
 			((pirate.y + pirate.height) <= maxY && pirate.y >= minY)) {
