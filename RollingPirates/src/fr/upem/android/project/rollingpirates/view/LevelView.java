@@ -50,6 +50,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceCreated(SurfaceHolder holder) {
 		Rect surfaceFrame = holder.getSurfaceFrame();
 		model = GamePlateModel.init(grid, surfaceFrame.width(), surfaceFrame.height());
+		model.setHolder(holder);
 		levelThread = new LevelThread(holder, model, getContext());
 		levelController = new LevelController(model, levelThread);
 		

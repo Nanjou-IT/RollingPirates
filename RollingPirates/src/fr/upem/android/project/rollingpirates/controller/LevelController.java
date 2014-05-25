@@ -1,0 +1,152 @@
+package fr.upem.android.project.rollingpirates.controller;
+
+import java.util.ArrayList;
+
+import fr.upem.android.project.rollingpirates.model.GamePlateModel;
+import fr.upem.android.project.rollingpirates.model.Pirate;
+import android.graphics.Point;
+import android.support.v4.view.MotionEventCompat;
+import android.util.Log;
+import android.view.MotionEvent;
+
+public class LevelController {
+	
+	private boolean gameStarted = false;
+	private final GamePlateModel model;
+	private final LevelThread levelThread;
+	private Point player1 = null; 
+	private Point player2 = null;
+	
+	public LevelController(GamePlateModel model, LevelThread levelThread) {
+		this.model = model;
+		this.levelThread = levelThread;
+	}
+
+	public boolean onTouchEvent(MotionEvent event) {
+		if (!gameStarted) {
+			// TODO : launch dynamic animation 
+			gameStarted = true;
+			launchControllers();
+			return true;
+		}
+		
+		int action = MotionEventCompat.getActionMasked(event);
+
+		// Get the index of the pointer associated with the action.
+		int index = MotionEventCompat.getActionIndex(event);
+
+		int xPos = (int) MotionEventCompat.getX(event, index);
+		int yPos = (int) MotionEventCompat.getY(event, index);
+		
+		switch (action) {
+		case MotionEvent.ACTION_DOWN:
+		case MotionEvent.ACTION_POINTER_DOWN:
+			Point point = new Point(xPos, yPos);
+			if (xPos <= model.getSurfaceWidth()/2) {
+				// Player 1
+				Log.d("LevelView", "PLAYER 1: Pushed on surface.");
+
+				player1 = point;
+			} else {
+				// Player 2
+				Log.d("LevelView", "PLAYER 2: Pushed on surface.");
+
+				player2 = point;
+			}
+			break;
+		case MotionEvent.ACTION_UP:
+		case MotionEvent.ACTION_POINTER_UP:
+			if (xPos <= model.getSurfaceWidth()/2) {
+				if (player1 == null) {
+					break;
+				}
+				
+				// Player 1
+				Log.d("LevelView", "PLAYER 1: Unpushed on surface.");
+				
+				float endX = xPos;
+				float endY = yPos;
+				float startX = player1.x;
+				float startY = player1.y;
+
+				Log.d("LevelView", "PLAYER 1: click zone >  startX:" + startX + "  startY:" + startY + "  endX:" + endX + "  endY:" + endY );
+
+				if (isAClick(startX, endX, startY, endY)) { 
+					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
+					
+					if (model != null) {
+						Pirate pirate1 = model.getPirate(2);
+						if (pirate1 != null) {
+							pirate1.jump(model);
+						}
+					}
+				}
+			} else {
+				if (player2 == null) {
+					break;
+				}
+				// Player 2
+				Log.d("LevelView", "PLAYER 2: Unpushed on surface.");
+				
+				float endX = xPos;
+				float endY = yPos;
+				float startX = player2.x;
+				float startY = player2.y;
+				
+				Log.d("LevelView", "PLAYER 2: click zone >  startX:" + startX + "  startY:" + startY + "  endX:" + endX + "  endY:" + endY );
+
+				if (isAClick(startX, endX, startY, endY)) { 
+					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
+					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
+					
+					if (model != null) {
+						Pirate pirate2 = model.getPirate(1);
+						if (pirate2 != null) {
+							pirate2.jump(model);
+						}
+					}
+				}
+
+			}
+			break;
+		case MotionEvent.ACTION_OUTSIDE:
+			break;
+		case MotionEvent.ACTION_CANCEL:
+			break;
+		}
+
+		return true;
+	}
+	
+	private boolean isAClick(float startX, float endX, float startY, float endY) {
+	    float differenceX = Math.abs(startX - endX);
+	    float differenceY = Math.abs(startY - endY);
+	    if (differenceX > 15 || differenceY > 15) {
+	    	return false;
+	    }
+	    return true;
+	}
+	
+	private void launchControllers() {
+		// Launch controller Threads which modify the model (give model reference)
+		ArrayList<Pirate> pirates = model.getPirates();
+		for (int i = 0; i < pirates.size(); i+=1) {
+			FightingPirate fightingPirate = new FightingPirate(model, pirates.get(i));
+			new Thread(fightingPirate).start();
+			// break;
+		}
+		levelThread.setRunning(true);
+		levelThread.start();
+	}
+}

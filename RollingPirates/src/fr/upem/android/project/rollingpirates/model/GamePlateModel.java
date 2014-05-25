@@ -6,6 +6,7 @@ import java.util.Arrays;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
+import android.view.SurfaceHolder;
 import fr.upem.android.project.rollingpirates.controller.LevelThread;
 import fr.upem.android.project.rollingpirates.view.LevelView;
 
@@ -35,6 +36,8 @@ public class GamePlateModel {
 	
 	private final int surfaceWidth;
 	private final int surfaceheight;
+
+	private SurfaceHolder holder;
 	
 	public GamePlateModel(int cellWidth, int cellHeight, int surfaceWidth, int surfaceHeight) {
 		this.surfaceheight = surfaceHeight;
@@ -97,7 +100,7 @@ public class GamePlateModel {
 		if (pirateNumber > players.size() || pirateNumber <= 0) {
 			return null;
 		}
-		return players.get(pirateNumber);
+		return players.get(pirateNumber-1);
 	}
 	
 	public RectF getRightScreen() {
@@ -543,5 +546,13 @@ public class GamePlateModel {
 			}
 		}
 		
+	}
+	
+	public SurfaceHolder getHolder() {
+		return holder;
+	}
+	
+	public void setHolder(SurfaceHolder holder) {
+		this.holder = holder;
 	}
 }

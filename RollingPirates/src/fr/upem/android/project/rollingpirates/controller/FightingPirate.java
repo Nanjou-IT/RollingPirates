@@ -12,7 +12,7 @@ public class FightingPirate implements Runnable {
 
 	private final GamePlateModel model;
 	private final Pirate pirate;
-	private final long FPS = 20;
+	private final long FPS = 50;
 	
 	public FightingPirate(GamePlateModel model, Pirate pirate) {
 		this.model = model;
@@ -52,7 +52,6 @@ public class FightingPirate implements Runnable {
 					break;
 				}
 			}
-			
 			
 			
 //			if (updated) {
