@@ -16,10 +16,24 @@ public class LevelController {
 	private final LevelThread levelThread;
 	private Point player1 = null; 
 	private Point player2 = null;
+	private final FightingPirate[] fightingPirates;
+	private final Thread[] fightingPiratesWorkers;
 	
 	public LevelController(GamePlateModel model, LevelThread levelThread) {
 		this.model = model;
 		this.levelThread = levelThread;
+		
+		ArrayList<Pirate> pirates = model.getPirates();
+		this.fightingPirates = new FightingPirate[pirates.size()];
+		
+		for (int i = 0; i < pirates.size(); i+=1) {
+			fightingPirates[i] = new FightingPirate(model, pirates.get(i));
+		}
+		
+		this.fightingPiratesWorkers = new Thread[fightingPirates.length]; 
+		for (int i = 0; i < fightingPirates.length; i+=1) {
+			fightingPiratesWorkers[i] = new Thread(fightingPirates[i]);
+		}
 	}
 
 	public boolean onTouchEvent(MotionEvent event) {
@@ -81,9 +95,15 @@ public class LevelController {
 					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
 					
 					if (model != null) {
-						Pirate pirate1 = model.getPirate(2);
+						Pirate pirate1 = model.getPirate(1);
 						if (pirate1 != null) {
-							pirate1.jump(model);
+							for (int i = 0; i < fightingPirates.length; i+=1) {
+								int pirateId = fightingPirates[i].getPirateId();
+								if (pirateId == Pirate.PLAYER_ONE) {
+									fightingPirates[i].setJumping(true);
+								}
+							}
+//							pirate1.jump(model);
 						}
 					}
 				}
@@ -111,9 +131,15 @@ public class LevelController {
 					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
 					
 					if (model != null) {
-						Pirate pirate2 = model.getPirate(1);
+						Pirate pirate2 = model.getPirate(2);
 						if (pirate2 != null) {
-							pirate2.jump(model);
+							for (int i = 0; i < fightingPirates.length; i+=1) {
+								int pirateId = fightingPirates[i].getPirateId();
+								if (pirateId == Pirate.PLAYER_TWO) {
+									fightingPirates[i].setJumping(true);
+								}
+							}
+//							pirate2.jump(model);
 						}
 					}
 				}
@@ -139,13 +165,11 @@ public class LevelController {
 	}
 	
 	private void launchControllers() {
-		// Launch controller Threads which modify the model (give model reference)
-		ArrayList<Pirate> pirates = model.getPirates();
-		for (int i = 0; i < pirates.size(); i+=1) {
-			FightingPirate fightingPirate = new FightingPirate(model, pirates.get(i));
-			new Thread(fightingPirate).start();
-			// break;
+		// Launch controller Threads which modify the model
+		for (int i = 0; i < fightingPirates.length; i+=1) {
+			fightingPiratesWorkers[i].start();
 		}
+		
 		levelThread.setRunning(true);
 		levelThread.start();
 	}

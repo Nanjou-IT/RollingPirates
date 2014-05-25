@@ -12,11 +12,20 @@ public class FightingPirate implements Runnable {
 
 	private final GamePlateModel model;
 	private final Pirate pirate;
+	private boolean isJumping = false;
 	private final long FPS = 50;
 	
 	public FightingPirate(GamePlateModel model, Pirate pirate) {
 		this.model = model;
 		this.pirate = pirate;
+	}
+	
+	public int getPirateId() {
+		return pirate.getPlayerId();
+	}
+	
+	public void setJumping(boolean isJumping) {
+		this.isJumping = isJumping;
 	}
 	
 	@Override
@@ -51,6 +60,12 @@ public class FightingPirate implements Runnable {
 					updated = true;
 					break;
 				}
+			}
+			
+			if (this.isJumping) {
+				Log.d("FightingPirate", "WOOOOOW : I have to jump ??!!!!!  -- from :" + Thread.currentThread().getName());
+				pirate.jump(model);
+				this.isJumping = false;
 			}
 			
 			

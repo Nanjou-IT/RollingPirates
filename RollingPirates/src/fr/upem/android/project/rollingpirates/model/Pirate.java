@@ -22,8 +22,8 @@ import fr.upem.android.project.rollingpirates.R;
 public class Pirate {
 	private static final int BMP_ROWS = 4;
 	private static final int BMP_COLUMNS = 3;
-	private static final int PLAYER_ONE = 0;
-	private static final int PLAYER_TWO = 1;
+	public static final int PLAYER_ONE = 0;
+	public static final int PLAYER_TWO = 1;
 
 	public float x; // point at left
 	public float y; // point at top
@@ -80,6 +80,10 @@ public class Pirate {
 		return pirateRect;
 	}
 	
+	public int getPlayerId() {
+		return playerCounter;
+	}
+	
 	public Bitmap getBitmap() {
 		return bmp;
 	}
@@ -133,52 +137,14 @@ public class Pirate {
 		Log.d("Pirates", "Lives are drawed");
 	}
 	
-//	public void jump2(GamePlateModel model) {
-//		if (orientation == Orientation.Vertical) {
-//			RectF collisionRect = new RectF(x + getWidth(), y + speed, getWidth(), getHeight());
-//			if (speed + y <= p.getMinY()) {
-//				y = p.getMinY();
-//				if(checkForCollision(model,collisionRect)){
-//					changeDirection();
-//					return true;
-//				}
-//			} 
-//			if (speed + y >= p.getMaxY() && checkForCollision(model,collisionRect)) {
-//				y = p.getMaxY()-this.height;
-//				if(checkForCollision(model,collisionRect)){
-//					changeDirection();
-//					return true;
-//				}
-//			}
-//			return false;
-//		} else if (orientation == Orientation.Horizontal){
-//			RectF collisionRect = new RectF(x + getWidth() + speed, y, getWidth(), getHeight());
-//			if (speed + x <= p.getMinX() && checkForCollision(model,collisionRect)) {
-//				x = p.getMinX();
-//				if(checkForCollision(model,collisionRect)){
-//					changeDirection();
-//					return true;
-//				}
-//			}
-//			if (speed + x >= p.getMaxX() && checkForCollision(model,collisionRect)) {
-//				x = p.getMaxX()-this.width;
-//				if(checkForCollision(model,collisionRect)){
-//					changeDirection();
-//					return true;
-//				}
-//			}
-//			return false;
-//		}
-//	}
-
 	public void jump(GamePlateModel model) {
 		Log.d("Pirate", "JUMP");
 		int i = 0;
 		
 		boolean directionRight = false;  // if is not direction == left
 		boolean directionBottom = false; // if is not direction == top
-		boolean ok = true;
-		while (ok) {
+		boolean collision = false;
+		while (!collision) {
 			if (orientation == Orientation.Horizontal) {
 				if (speed > 0) {
 					directionRight = true;
@@ -240,11 +206,6 @@ public class Pirate {
 			
 			pirateRect = new RectF(x, y, x + width, y + height);
 			
-			SurfaceHolder holder = model.getHolder();
-			Canvas lockCanvas = holder.lockCanvas();
-			lockCanvas.drawRect(pirateRect, paint);
-			holder.unlockCanvasAndPost(lockCanvas);
-			
 			
 			ArrayList<Plate> hPlates = model.getHPlates();
 			int sizeHplates = hPlates.size();
@@ -267,9 +228,7 @@ public class Pirate {
 						Log.d("Pirate", "C2 : NO");
 					}
 					
-					ok = false;
-//					return; 
-//					break;
+					collision = true;
 				}
 			}
 			
@@ -284,25 +243,26 @@ public class Pirate {
 					if (x < p.getPlateRect().left) { // from left
 						x = p.getPlateRect().left - width;
 						orientation = Orientation.Vertical;
+						gravity = Gravity.RIGHT;
 						Log.d("Pirate", "C1 : YES");
 					} else {
 						x = p.getPlateRect().right;
+						gravity = Gravity.LEFT;
 						orientation = Orientation.Vertical;
 						Log.d("Pirate", "C2 : NO");
 					}
 
-					ok = false;
-					// return;
-					// break;
+					collision = true;
 				}
 			}
 			
 			try {
-				Thread.sleep(20);
+				Thread.sleep(5);
 			} catch (InterruptedException e) { }
 			
-			model.updateModel();
+			
 			i += 1;
+			model.updateModel();
 		}
 	}
 	
@@ -318,15 +278,9 @@ public class Pirate {
 			}
 		} else {
 			if (speed > 0) { // moving to down
-				projectedPirate = new RectF(x, y + height, x + width, y + height); // 69
-				
-				Log.d("Pirate", "REAL ME :   > top: " + y + "  > bottom: " + (y + height));
-				Log.d("Pirate", "moving to down :   > top: " + projectedPirate.top + "  > bottom: " + projectedPirate.bottom);
+				projectedPirate = new RectF(x, y + height, x + width, y + height);
 			} else { // moving to up
 				projectedPirate = new RectF(x, y+speed, x + width, y+speed);
-				
-				Log.d("Pirate", "REAL ME :   > top: " + y + "  > bottom: " + (y));
-				Log.d("Pirate", "moving to up :   > top: " + projectedPirate.top + "  > bottom: " + projectedPirate.bottom);
 			}
 		}
 		
