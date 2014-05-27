@@ -161,142 +161,12 @@ public class Pirate {
 				}
 			}
 			
-			
 			// TODO : Jump 'return' not handled in some cases.. 
-			if (gravity == Gravity.TOP) {
-				y += 2;
-				if (directionRight) {
-					x += 1;
-				} else {
-					x -= 1;
-				}
-				if (i == 50) {
-					gravity = Gravity.DOWN;
-				}
-			}
-			if (gravity == Gravity.DOWN) {
-				y -= 2;
-				if (directionRight) {
-					x += 1;
-				} else {
-					x -= 1;
-				}
-//				if (i == 20) {
-//					gravity = Gravity.TOP;
-//				}
-			}
-			if (gravity == Gravity.LEFT) {
-				x += 2;
-				
-				if (directionBottom) {
-					y += 1;
-				} else {
-					y -= 1;
-				}
-				if (i == 50) {
-					gravity = Gravity.RIGHT;
-				}
-			}
-			if (gravity == Gravity.RIGHT) {
-				x -= 2;
-				
-				if (directionBottom) {
-					y += 1;
-				} else {
-					y -= 1;
-				}
-//				if (i == 20) {
-//					gravity = Gravity.LEFT;
-//				}
-			}
-			
+			updatingGravityAndDirection(i, directionRight, directionBottom);
 			
 			pirateRect = new RectF(x, y, x + width, y + height);
 			
-			
-			ArrayList<Plate> hPlates = model.getHPlates();
-			int sizeHplates = hPlates.size();
-			for (int j = 0; j < sizeHplates; j+=1) {
-				Plate p = hPlates.get(j);
-				if (pirateRect.intersect(p.getPlateRect())) {
-					Log.d("Pirate", "CONNECTED HORIZONTAL");
-					
-					Log.d("Pirate", "Pirate.Bottom > Plate.Bottom ?   " + pirateRect.bottom  + ">" + p.getPlateRect().bottom); 
-					if ((y+height) < p.getPlateRect().bottom) { // from top
-						y = p.getPlateRect().top - height;
-						
-						gravity = Gravity.DOWN;
-						orientation = Orientation.Horizontal;
-						Log.d("Pirate", "C1 : YES");
-					} else {
-						y = p.getPlateRect().bottom;
-						
-						gravity = Gravity.TOP;
-						orientation = Orientation.Horizontal;
-						Log.d("Pirate", "C2 : NO");
-					}
-					
-					// Setting up connected && out of bounds patch
-					if (x+width >= p.getMaxX()) {
-						x = p.getMaxX() - width;
-						Log.d("Pirate", "HORIZONTAL | RIGHT  : X > bounds");
-						if (speed > 0) {
-							speed *= -1;
-						}
-					}
-					
-					if (x <= p.getMinX()) {
-						x = p.getMinX();
-						Log.d("Pirate", "HORIZONTAL | LEFT  : X < bounds");
-						if (speed < 0) {
-							speed *= -1;
-						}
-					}
-					
-					collision = true;
-				}
-			}
-			
-			ArrayList<Plate> vPlates = model.getVPlates();
-			int sizeVplates = vPlates.size();
-			for (int j = 0; j < sizeVplates; j+=1) {
-				Plate p = vPlates.get(j);
-				if (pirateRect.intersect(p.getPlateRect())) {
-					Log.d("Pirate", "CONNECTED VERTICAL");
-
-					Log.d("Pirate", "Pirate.Left < Plate.Left ?   " + x + "<" + p.getPlateRect().left);
-					if (x < p.getPlateRect().left) { // from left
-						x = p.getPlateRect().left - width;
-						orientation = Orientation.Vertical;
-						gravity = Gravity.RIGHT;
-						Log.d("Pirate", "C1 : YES");
-					} else {
-						x = p.getPlateRect().right;
-						gravity = Gravity.LEFT;
-						orientation = Orientation.Vertical;
-						Log.d("Pirate", "C2 : NO");
-					}
-					
-					if (y <= p.getMinY()) {
-						y = p.getMinY();
-						Log.d("Pirate", "VERTICAL | TOP  : Y > bounds   speed=" + speed);
-						// change direction
-						if (speed < 0) {
-							speed *= -1;
-						}
-					}
-					
-					if (y+height >= p.getMaxY()) {
-						y = p.getMaxY() - height;
-						Log.d("Pirate", "VERTICAL | BOTTOM  : Y < bounds");
-						if (speed > 0) {
-							speed *= -1;
-						}
-					}
-					
-					collision = true;
-				}
-			}
+			collision = isCollision(model, collision);
 			
 			try {
 				Thread.sleep(5);
@@ -306,6 +176,143 @@ public class Pirate {
 			i += 1;
 			model.updateModel();
 		}
+	}
+
+	private void updatingGravityAndDirection(int i, boolean directionRight,
+			boolean directionBottom) {
+		if (gravity == Gravity.TOP) {
+			y += 2;
+			if (directionRight) {
+				x += 1;
+			} else {
+				x -= 1;
+			}
+			if (i == 50) {
+				gravity = Gravity.DOWN;
+			}
+		}
+		if (gravity == Gravity.DOWN) {
+			y -= 2;
+			if (directionRight) {
+				x += 1;
+			} else {
+				x -= 1;
+			}
+//				if (i == 20) {
+//					gravity = Gravity.TOP;
+//				}
+		}
+		if (gravity == Gravity.LEFT) {
+			x += 2;
+			
+			if (directionBottom) {
+				y += 1;
+			} else {
+				y -= 1;
+			}
+			if (i == 50) {
+				gravity = Gravity.RIGHT;
+			}
+		}
+		if (gravity == Gravity.RIGHT) {
+			x -= 2;
+			
+			if (directionBottom) {
+				y += 1;
+			} else {
+				y -= 1;
+			}
+//				if (i == 20) {
+//					gravity = Gravity.LEFT;
+//				}
+		}
+	}
+
+	private boolean isCollision(GamePlateModel model, boolean collision) {
+		ArrayList<Plate> hPlates = model.getHPlates();
+		int sizeHplates = hPlates.size();
+		for (int j = 0; j < sizeHplates; j+=1) {
+			Plate p = hPlates.get(j);
+			if (pirateRect.intersect(p.getPlateRect())) {
+				Log.d("Pirate", "CONNECTED HORIZONTAL");
+				
+				Log.d("Pirate", "Pirate.Bottom > Plate.Bottom ?   " + pirateRect.bottom  + ">" + p.getPlateRect().bottom); 
+				if ((y+height) < p.getPlateRect().bottom) { // from top
+					y = p.getPlateRect().top - height;
+					
+					gravity = Gravity.DOWN;
+					orientation = Orientation.Horizontal;
+					Log.d("Pirate", "C1 : YES");
+				} else {
+					y = p.getPlateRect().bottom;
+					
+					gravity = Gravity.TOP;
+					orientation = Orientation.Horizontal;
+					Log.d("Pirate", "C2 : NO");
+				}
+				
+				// Setting up connected && out of bounds patch
+				if (x+width >= p.getMaxX()) {
+					x = p.getMaxX() - width;
+					Log.d("Pirate", "HORIZONTAL | RIGHT  : X > bounds");
+					if (speed > 0) {
+						speed *= -1;
+					}
+				}
+				
+				if (x <= p.getMinX()) {
+					x = p.getMinX();
+					Log.d("Pirate", "HORIZONTAL | LEFT  : X < bounds");
+					if (speed < 0) {
+						speed *= -1;
+					}
+				}
+				
+				collision = true;
+			}
+		}
+		
+		ArrayList<Plate> vPlates = model.getVPlates();
+		int sizeVplates = vPlates.size();
+		for (int j = 0; j < sizeVplates; j+=1) {
+			Plate p = vPlates.get(j);
+			if (pirateRect.intersect(p.getPlateRect())) {
+				Log.d("Pirate", "CONNECTED VERTICAL");
+
+				Log.d("Pirate", "Pirate.Left < Plate.Left ?   " + x + "<" + p.getPlateRect().left);
+				if (x < p.getPlateRect().left) { // from left
+					x = p.getPlateRect().left - width;
+					orientation = Orientation.Vertical;
+					gravity = Gravity.RIGHT;
+					Log.d("Pirate", "C1 : YES");
+				} else {
+					x = p.getPlateRect().right;
+					gravity = Gravity.LEFT;
+					orientation = Orientation.Vertical;
+					Log.d("Pirate", "C2 : NO");
+				}
+				
+				if (y <= p.getMinY()) {
+					y = p.getMinY();
+					Log.d("Pirate", "VERTICAL | TOP  : Y > bounds   speed=" + speed);
+					// change direction
+					if (speed < 0) {
+						speed *= -1;
+					}
+				}
+				
+				if (y+height >= p.getMaxY()) {
+					y = p.getMaxY() - height;
+					Log.d("Pirate", "VERTICAL | BOTTOM  : Y < bounds");
+					if (speed > 0) {
+						speed *= -1;
+					}
+				}
+				
+				collision = true;
+			}
+		}
+		return collision;
 	}
 	
 	public void move(GamePlateModel model) {
@@ -371,6 +378,75 @@ public class Pirate {
 		x += speed;
 		pirateRect = new RectF(x, y, x + width, y + height);
 		model.updateModel();
+	}
+
+	public void fall(GamePlateModel model) {
+		int i = 0;
+		
+		boolean directionRight = false;  // if is not direction == left
+		boolean directionBottom = false; // if is not direction == top
+		boolean collision = false;
+		
+		while (!collision) {
+			if (orientation == Orientation.Horizontal) {
+				if (speed > 0) {
+					directionRight = true;
+				}
+			} else {
+				if (speed > 0) {
+					directionBottom = true;
+				}
+			}
+			
+			// Update falling status
+			if (gravity == Gravity.TOP || gravity == Gravity.DOWN) {
+				if (i == 0 || i == 1) {
+					if (directionRight) {
+						x += width/2;
+					} else {
+						x -= width/2;
+					}
+				} else {
+				
+				if (gravity == Gravity.TOP) {
+					y -= height;
+				}
+				if (gravity == Gravity.DOWN) {
+					y += height;
+				}
+				}
+			}
+			
+			if (gravity == Gravity.LEFT || gravity == Gravity.RIGHT) {
+				if (i == 0 || i == 1) {
+					if (directionBottom) {
+						y += height/2;
+					} else {
+						y -= height/2;
+					}
+				} else {
+				
+				if (gravity == Gravity.LEFT) {
+					x -= width;
+				}
+				if (gravity == Gravity.RIGHT) {
+					x += width;
+				}
+				}
+			}
+			
+			pirateRect = new RectF(x, y, x + width, y + height);
+			
+			collision = isCollision(model, collision);
+			
+			try {
+				Thread.sleep(35);
+			} catch (InterruptedException e) { }
+			
+			
+			i += 1;
+			model.updateModel();
+		}
 	}
 	
 }

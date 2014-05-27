@@ -2,7 +2,9 @@ package fr.upem.android.project.rollingpirates.model;
 
 import java.util.ArrayList;
 
-import android.graphics.Rect;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.RectF;
 
 enum Gravity { LEFT, TOP, RIGHT, DOWN, ALL; }
@@ -18,11 +20,13 @@ public class Plate {
 	private final float maxX;
 	private final float minY;
 	private final float maxY;
-	
+	private final Paint paint;
 	public Plate(ArrayList<Obstacle> obstacles, Gravity gravity, int lineRowNumber, Orientation orientation) {
 		this.obstacles = obstacles;
 		g = gravity;
 		o = orientation;
+		
+		paint = new Paint();
 		
 		// Obstacle list cannot be empty
 		if (obstacles.size() == 0) {
@@ -89,6 +93,14 @@ public class Plate {
 	
 	public Gravity getGravity() {
 		return g;
+	}
+	
+	public void draw(Canvas canvas) {
+		int sizeObstacle = obstacles.size();
+		for (int j = 0; j < sizeObstacle; j+=1) {
+			Obstacle o = obstacles.get(j);
+			canvas.drawRect(o.x, o.y, o.x + o.width, o.y + o.height, paint);
+		}
 	}
 	
 	@Override

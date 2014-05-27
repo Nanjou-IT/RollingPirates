@@ -4,10 +4,13 @@ import java.util.ArrayList;
 
 import fr.upem.android.project.rollingpirates.model.GamePlateModel;
 import fr.upem.android.project.rollingpirates.model.Pirate;
+import fr.upem.android.project.rollingpirates.view.LevelView;
 import android.graphics.Point;
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 public class LevelController {
 	
@@ -17,9 +20,11 @@ public class LevelController {
 	private Point player2 = null;
 	private final FightingPirate[] fightingPirates;
 	private final Thread[] fightingPiratesWorkers;
+	private final LevelView levelView;
 	
-	public LevelController(GamePlateModel model) {
+	public LevelController(GamePlateModel model, LevelView levelView) {
 		this.model = model;
+		this.levelView = levelView;
 		
 		ArrayList<Pirate> pirates = model.getPirates();
 		this.fightingPirates = new FightingPirate[pirates.size()];
@@ -33,7 +38,11 @@ public class LevelController {
 			fightingPiratesWorkers[i] = new Thread(fightingPirates[i]);
 		}
 	}
-
+	
+	public void setOnClickListener(OnClickListener l) {
+		Toast.makeText(levelView.getContext(), "MAIS LOL CLICK", Toast.LENGTH_LONG).show();
+	}
+	
 	public boolean onTouchEvent(MotionEvent event) {
 		if (!gameStarted) {
 			// TODO : launch dynamic animation 
@@ -167,5 +176,9 @@ public class LevelController {
 		for (int i = 0; i < fightingPirates.length; i+=1) {
 			fightingPiratesWorkers[i].start();
 		}
+	}
+	
+	public boolean getGameStatus() {
+		return gameStarted;
 	}
 }

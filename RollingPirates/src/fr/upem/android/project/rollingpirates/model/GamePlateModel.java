@@ -3,9 +3,9 @@ package fr.upem.android.project.rollingpirates.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.util.Log;
-import android.view.SurfaceHolder;
 import fr.upem.android.project.rollingpirates.view.LevelView;
 
 public class GamePlateModel {
@@ -138,6 +138,22 @@ public class GamePlateModel {
 		modelChanged();
 	}
 	
+	public void draw(Canvas canvas) {
+		int sizeHplates = hplates.size();
+		for (int i = 0; i < sizeHplates; i+=1) {
+			hplates.get(i).draw(canvas);
+		}
+		
+		int sizeVplates = vplates.size();
+		for (int i = 0; i < sizeVplates; i+=1) {
+			vplates.get(i).draw(canvas);
+		}
+		
+		int sizePirates = players.size();
+		for (int i = 0; i < sizePirates; i+=1) {
+			players.get(i).draw(canvas);
+		}
+	}
 	
 	////////////////
 	// HORIZONTAL //
