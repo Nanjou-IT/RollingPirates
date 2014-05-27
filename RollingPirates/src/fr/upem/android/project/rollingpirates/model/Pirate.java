@@ -12,6 +12,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,16 +30,21 @@ public class Pirate {
 
 	public float x; // point at left
 	public float y; // point at top
-	private final int playerCounter;
-	float width;
-	float height;
-	private Paint paint;
-	private Bitmap bmp;
-	private boolean running;
-
-	private RectF pirateRect;
 	private Gravity gravity;
 	private Orientation orientation;
+	float width;
+	float height;
+	
+	private final PointF startingPoint;
+	private final Gravity startingGravity;
+	private final Orientation startingOrientation;
+	private final int startingSpeed;
+	
+	private final int playerCounter;
+	private Paint paint;
+	private Bitmap bmp;
+
+	private RectF pirateRect;
 
 	private int lives = 3;
 	private int speed = 3;
@@ -47,10 +54,16 @@ public class Pirate {
 		this.y = y;
 		this.orientation = o;
 		this.gravity = g;
+		this.startingPoint = new PointF(x, y);
+		this.startingGravity = g;
+		this.startingOrientation = o;
+		this.startingSpeed = speed;
+		
 		this.playerCounter = playerCounter;
 		this.paint = new Paint();
 		this.paint.setTextSize(42);
 		this.paint.setColor(Color.GREEN);
+		
 		pirateRect = new RectF(x, y, x+ width, y + height);
 	}
 	
@@ -85,6 +98,10 @@ public class Pirate {
 		return playerCounter;
 	}
 	
+	public int getSpeed() {
+		return speed;
+	}
+	
 	public Bitmap getBitmap() {
 		return bmp;
 	}
@@ -111,10 +128,6 @@ public class Pirate {
 	
 	public void setHeight(float height) {
 		this.height = height;
-	}
-	
-	public void setRunning(boolean running) {
-		this.running = running;
 	}
 	
 	@Override
@@ -198,9 +211,9 @@ public class Pirate {
 			} else {
 				x -= 1;
 			}
-//				if (i == 20) {
-//					gravity = Gravity.TOP;
-//				}
+//			if (i == 20) {
+//				gravity = Gravity.TOP;
+//			}
 		}
 		if (gravity == Gravity.LEFT) {
 			x += 2;
@@ -222,9 +235,9 @@ public class Pirate {
 			} else {
 				y -= 1;
 			}
-//				if (i == 20) {
-//					gravity = Gravity.LEFT;
-//				}
+//			if (i == 20) {
+//				gravity = Gravity.LEFT;
+//			}
 		}
 	}
 
@@ -335,6 +348,22 @@ public class Pirate {
 		}
 		
 		
+		// Pirate intersection !
+		ArrayList<Pirate> otherPirates = model.getOtherPiratesThan(this);
+		for (int i = 0; i < otherPirates.size(); i+=1) {
+			Pirate pirate = otherPirates.get(i);
+			if (pirateRect.intersect(pirate.getPirateRect())) {
+				// Collision
+				if (Math.abs(pirate.getSpeed()) > Math.abs(speed)) {
+					lives -= 1;
+					startingPoint();
+					break;
+				}
+				isObstacle = true;
+				break;
+			}
+		}
+		
 		// Check if 'projectedPirate' is part of obstacles -> intersect !
 		ArrayList<Plate> vplates = model.getVPlates();
 		int sizeVplates = vplates.size();
@@ -378,6 +407,14 @@ public class Pirate {
 		x += speed;
 		pirateRect = new RectF(x, y, x + width, y + height);
 		model.updateModel();
+	}
+
+	private void startingPoint() {
+		x = startingPoint.x;
+		y = startingPoint.y;
+		orientation = startingOrientation;
+		gravity = startingGravity;
+		speed = startingSpeed;
 	}
 
 	public void fall(GamePlateModel model) {

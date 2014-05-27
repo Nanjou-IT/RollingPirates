@@ -98,6 +98,18 @@ public class GamePlateModel {
 		}
 		return players.get(pirateNumber-1);
 	}
+
+	public ArrayList<Pirate> getOtherPiratesThan(Pirate pirate) {
+		ArrayList<Pirate> pirates = new ArrayList<Pirate>();
+		
+		for (int i = 0; i < players.size(); i+=1) {
+			Pirate otherPirate = players.get(i);
+			if (otherPirate.getPlayerId() != pirate.getPlayerId()) {
+				pirates.add(otherPirate);
+			}
+		}
+		return pirates;
+	}
 	
 	public RectF getRightScreen() {
 		return rightScreen;
@@ -134,7 +146,6 @@ public class GamePlateModel {
 	 */
 	public void updateModel() {
 		// TODO : Model modifications
-		
 		modelChanged();
 	}
 	
