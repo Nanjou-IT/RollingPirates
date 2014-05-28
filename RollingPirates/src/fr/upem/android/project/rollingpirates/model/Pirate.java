@@ -28,8 +28,8 @@ public class Pirate {
 	public static final int PLAYER_ONE = 0;
 	public static final int PLAYER_TWO = 1;
 
-	public float x; // point at left
-	public float y; // point at top
+	float x; // point at left
+	float y; // point at top
 	private Gravity gravity;
 	private Orientation orientation;
 	float width;
@@ -41,7 +41,7 @@ public class Pirate {
 	private final int startingSpeed;
 	
 	private final int playerCounter;
-	private Paint paint;
+	private final Paint paint;
 	private Bitmap bmp;
 
 	private RectF pirateRect;
@@ -166,7 +166,6 @@ public class Pirate {
 		
 		paint.setColor(Color.GREEN);
 		c.drawText("Lives : " + lives, livesX, livesY, paint);
-		Log.d("Pirates", "Lives are drawed");
 	}
 	
 	public void jump(GamePlateModel model) {
@@ -176,7 +175,7 @@ public class Pirate {
 		boolean directionRight = false;  // if is not direction == left
 		boolean directionBottom = false; // if is not direction == top
 		boolean collision = false;
-		while (!collision && !secondJump) { // TODO : add a condition for jump lvl2 (pirate field update)
+		while (!collision && !secondJump) {
 			directionRight = false;
 			directionBottom = false;
 			if (orientation == Orientation.Horizontal) {
@@ -191,7 +190,7 @@ public class Pirate {
 			
 			updatingGravityAndDirection(i, directionRight, directionBottom);
 			pirateRect = new RectF(x, y, x + width, y + height);
-			collision = isCollision(model, collision);
+			collision = isCollision(model);
 			
 			try {
 				Thread.sleep(5);
@@ -218,7 +217,7 @@ public class Pirate {
 					}
 				}
 				
-				// // // //
+				// // // // TODO : the famous linear jump ?
 				if (gravity == Gravity.TOP) {
 					y += 2;
 				}
@@ -231,10 +230,10 @@ public class Pirate {
 				if (gravity == Gravity.RIGHT) {
 					x -= 2;
 				}
-				// // // // 
+				// // // // TODO : the famous linear jump ?
 				
 				pirateRect = new RectF(x, y, x + width, y + height);
-				collision = isCollision(model, collision);
+				collision = isCollision(model);
 				
 				try {
 					Thread.sleep(5);
@@ -261,19 +260,17 @@ public class Pirate {
 			if (i == 50) {
 				gravity = Gravity.DOWN;
 			}
-		}
-		if (gravity == Gravity.DOWN) {
+		} else if (gravity == Gravity.DOWN) {
 			y -= 2;
 			if (directionRight) {
 				x += 1;
 			} else {
 				x -= 1;
 			}
-//			if (i == 20) {
-//				gravity = Gravity.TOP;
-//			}
-		}
-		if (gravity == Gravity.LEFT) {
+			if (i == 50) {
+				gravity = Gravity.TOP;
+			}
+		} else if (gravity == Gravity.LEFT) {
 			x += 2;
 			
 			if (directionBottom) {
@@ -284,8 +281,7 @@ public class Pirate {
 			if (i == 50) {
 				gravity = Gravity.RIGHT;
 			}
-		}
-		if (gravity == Gravity.RIGHT) {
+		} else if (gravity == Gravity.RIGHT) {
 			x -= 2;
 			
 			if (directionBottom) {
@@ -293,13 +289,13 @@ public class Pirate {
 			} else {
 				y -= 1;
 			}
-//			if (i == 20) {
-//				gravity = Gravity.LEFT;
-//			}
+			if (i == 50) {
+				gravity = Gravity.LEFT;
+			}
 		}
 	}
 
-	private boolean isCollision(GamePlateModel model, boolean collision) {
+	private boolean isCollision(GamePlateModel model) {
 		ArrayList<Plate> hPlates = model.getHPlates();
 		int sizeHplates = hPlates.size();
 		for (int j = 0; j < sizeHplates; j+=1) {
@@ -339,7 +335,7 @@ public class Pirate {
 					}
 				}
 				
-				collision = true;
+				return true;
 			}
 		}
 		
@@ -380,10 +376,10 @@ public class Pirate {
 					}
 				}
 				
-				collision = true;
+				return true;
 			}
 		}
-		return collision;
+		return false;
 	}
 	
 	/**
@@ -539,7 +535,7 @@ public class Pirate {
 			
 			pirateRect = new RectF(x, y, x + width, y + height);
 			
-			collision = isCollision(model, collision);
+			collision = isCollision(model);
 			
 			try {
 				Thread.sleep(35);

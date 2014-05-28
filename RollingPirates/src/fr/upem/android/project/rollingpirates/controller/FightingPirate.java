@@ -50,16 +50,12 @@ public class FightingPirate implements Runnable {
         	while (run) {
         		startTime = System.currentTimeMillis();
 
-        		
-        		// TODO : At each loop => if no move detected then probably have to fall ! (direction speed)
-    			boolean pirateMoved = false;
-    			
+        		boolean pirateMoved = false;
     			
     			ArrayList<Plate> vPlates = model.getVPlates();
     			int sizeVplates = vPlates.size();
     			for (int i = 0; i < sizeVplates; i+=1) {
     				Plate p = vPlates.get(i);
-
     				if (p.isConnectedTo(pirate)) {
     					int lives = pirate.move(model);
     					pirateMoved = true;
@@ -74,7 +70,6 @@ public class FightingPirate implements Runnable {
     			int sizeHplates = hPlates.size();
     			for (int i = 0; i < sizeHplates; i+=1) {
     				Plate p = hPlates.get(i);
-
     				if (p.isConnectedTo(pirate)) {
     					int lives = pirate.move(model);
     					pirateMoved = true;
@@ -85,7 +80,7 @@ public class FightingPirate implements Runnable {
     				}
         		}
 
-//        		// A pirate have to jump
+    			// A pirate have to jump
         		if (this.isJumping) {
         			Log.d("FightingPirate", "WOOOOOW : I have to jump ??!!!!!  -- from :" + Thread.currentThread().getName());
     				pirate.jump(model);

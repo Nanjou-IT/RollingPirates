@@ -56,20 +56,9 @@ public class LevelController {
 			fightingPiratesWorkers[i] = new Thread(fightingPirates[i]);
 		}
 	}
-
-	public static OnClickListener onClickListener() {
-		return new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Log.d("Controller", "HUHU click Handled ! ");
-			}
-		};
-	}	
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		if (!gameStarted) {
-			// TODO : launch dynamic animation 
 			gameStarted = true;
 			launchControllers();
 			return true;
@@ -88,14 +77,10 @@ public class LevelController {
 		case MotionEvent.ACTION_POINTER_DOWN:
 			Point point = new Point(xPos, yPos);
 			if (xPos <= model.getSurfaceWidth()/2) {
-				// Player 1
-				Log.d("LevelView", "PLAYER 1: Pushed on surface.");
-
+				// Player 1 pushed his surface
 				player1 = point;
 			} else {
-				// Player 2
-				Log.d("LevelView", "PLAYER 2: Pushed on surface.");
-
+				// Player 2 pushed his surface
 				player2 = point;
 			}
 			break;
@@ -107,24 +92,12 @@ public class LevelController {
 				}
 				
 				// Player 1
-				Log.d("LevelView", "PLAYER 1: Unpushed on surface.");
-				
 				float endX = xPos;
 				float endY = yPos;
 				float startX = player1.x;
 				float startY = player1.y;
 
-				Log.d("LevelView", "PLAYER 1: click zone >  startX:" + startX + "  startY:" + startY + "  endX:" + endX + "  endY:" + endY );
-
 				if (isAClick(startX, endX, startY, endY)) { 
-					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P1 : WE HAVE A CLICK!!");
-					
 					if (model != null) {
 						Pirate pirate1 = model.getPirate(1);
 						if (pirate1 != null) {
@@ -136,7 +109,6 @@ public class LevelController {
 									} else {
 										fightingPirates[i].setJumping(true);
 									}
-//									pirate1.setJumpLevel2(false);
 								}
 							}
 						}
@@ -146,25 +118,14 @@ public class LevelController {
 				if (player2 == null) {
 					break;
 				}
-				// Player 2
-				Log.d("LevelView", "PLAYER 2: Unpushed on surface.");
 				
+				// Player 2
 				float endX = xPos;
 				float endY = yPos;
 				float startX = player2.x;
 				float startY = player2.y;
 				
-				Log.d("LevelView", "PLAYER 2: click zone >  startX:" + startX + "  startY:" + startY + "  endX:" + endX + "  endY:" + endY );
-
 				if (isAClick(startX, endX, startY, endY)) { 
-					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
-					Log.d("LevelView", "P2 : WE HAVE A CLICK!!");
-					
 					if (model != null) {
 						Pirate pirate2 = model.getPirate(2);
 						if (pirate2 != null) {
@@ -181,7 +142,6 @@ public class LevelController {
 						}
 					}
 				}
-
 			}
 			break;
 		case MotionEvent.ACTION_OUTSIDE:
@@ -210,7 +170,6 @@ public class LevelController {
 	}
 	
 	public void stopControllers() {
-		Log.d("Controller", "Stopping controllers");
 		// Stop controller Threads which modify the model
 		for (int i = 0; i < fightingPirates.length; i+=1) {
 			fightingPirates[i].setRunning(false);
@@ -225,7 +184,7 @@ public class LevelController {
 	public void stopGame(final int pirateLooserId) {
 		stopControllers();
 		
-		
+		// Print a pop-up with some fade effects..
 		((Activity)levelView.getContext()).runOnUiThread(new Runnable() {
 			
 			@Override
@@ -264,7 +223,6 @@ public class LevelController {
 
 					@Override
 					public void onAnimationStart(Animation animation) {
-						Log.d("Controller", "Annimation start !");
 						LayoutInflater layoutInflater = LayoutInflater.from(levelView.getContext()); 
 						View popupView = layoutInflater.inflate(R.layout.popup, null);  
 						
@@ -279,12 +237,8 @@ public class LevelController {
 			            final PopupWindow popupWindow = new PopupWindow(popupView, model.getSurfaceWidth()/2, model.getSurfaceHeight()/3);  
 			            
 			            
-			            Log.d("Controller", "Show popup dimension :  width;" + popupWindow.getWidth()+ " height:" + popupWindow.getHeight());
-			            
 			            int xpos = model.getSurfaceWidth()/2 - popupWindow.getWidth()/2;
 			            int ypos = -(model.getSurfaceHeight()/2 + popupWindow.getHeight()/2);
-			            Log.d("Controller", "Show popup at x: " + xpos + " y:" + ypos);
-			            
 			            
 			            Button btnRestart = (Button)popupView.findViewById(R.id.restartButton);
 			            btnRestart.setOnClickListener(new OnClickListener() {
@@ -310,7 +264,6 @@ public class LevelController {
 								levelView.getContext().startActivity(i);
 							}
 						});
-			            
 			            
 			            popupWindow.showAsDropDown(levelView, xpos, ypos);
 					}

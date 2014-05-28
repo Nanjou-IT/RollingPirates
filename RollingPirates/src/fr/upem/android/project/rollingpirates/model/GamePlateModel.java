@@ -22,10 +22,9 @@ public class GamePlateModel {
 	private final int widthRatio; 
 	private final int heightRatio;
 	
-	private ArrayList<Plate> hplates;
-	private ArrayList<Plate> vplates;
-	private ArrayList<Plate> plates;
-	private ArrayList<Pirate> players;
+	private final ArrayList<Plate> hplates;
+	private final ArrayList<Plate> vplates;
+	private final ArrayList<Pirate> players;
 	private final ArrayList<Bonus> bonuses;
 	
 	private final ArrayList<LevelView> views;
@@ -128,7 +127,7 @@ public class GamePlateModel {
 		return surfaceWidth;
 	}
 	
-	public void modelChanged() {
+	private void modelChanged() {
 		for (LevelView v : views) {
 			v.postInvalidate();
 		}
@@ -146,7 +145,6 @@ public class GamePlateModel {
 	 *  Function used outside of the model for ANY update.
 	 */
 	public void updateModel() {
-		// TODO : Model modifications
 		modelChanged();
 	}
 	
@@ -167,9 +165,9 @@ public class GamePlateModel {
 		}
 	}
 	
-	////////////////
-	// HORIZONTAL //
-	////////////////
+	//////////////////////////////
+	// HORIZONTAL PLATE PARSING //
+	//////////////////////////////
 	
 	private static ArrayList<Plate> getHorizontalPlates(GamePlateModel game, char[][] level) {
 		ArrayList<Plate> list = new ArrayList<Plate>();
@@ -248,9 +246,9 @@ public class GamePlateModel {
 	}
 	
 	
-	//////////////
-	// VERTICAL //
-	//////////////
+	/////////////////////////////
+	// VERTICAL PLATE PARSING //
+	////////////////////////////
 	
 	private static ArrayList<Plate> getVerticalPlates(GamePlateModel game, char[][] level) {
 		ArrayList<Plate> list = new ArrayList<Plate>();
