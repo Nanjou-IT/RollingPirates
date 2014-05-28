@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import fr.upem.android.project.rollingpirates.controller.LevelController;
 import fr.upem.android.project.rollingpirates.model.GamePlateModel;
 import fr.upem.android.project.rollingpirates.view.LevelView;
 
@@ -63,7 +65,7 @@ public class LevelFragment extends Fragment {
 		
 		RelativeLayout viewContainer = (RelativeLayout) v.findViewById(R.id.levelContainer);
 		View levelView = new LevelView(getActivity(), grid);
-		levelView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+		levelView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 		viewContainer.addView(levelView);
 		
 		return v;

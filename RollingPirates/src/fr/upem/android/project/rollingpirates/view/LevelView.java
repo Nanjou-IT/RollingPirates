@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Toast;
 import fr.upem.android.project.rollingpirates.controller.LevelController;
 import fr.upem.android.project.rollingpirates.model.GamePlateModel;
@@ -27,7 +28,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 	private final char[][] grid;
 	private GamePlateModel model = null;
 	private LevelController levelController;
-	private int preStartStep = 1;
+	public int preStartStep = 1;
 	
 	public LevelView(Context context, char[][] grid) {
 		super(context);
@@ -43,12 +44,6 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		return levelController.onTouchEvent(event);
-	}
-	
-	@Override
-	public void setOnClickListener(OnClickListener l) {
-//		super.setOnClickListener(l);
-//		levelController.setOnClickListener(l);
 	}
 	
 	@Override
@@ -76,11 +71,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 			if (preStartStep == 1) {
 				canvas.drawARGB(255, 255, 255, 255);
 		    	model.draw(canvas);
-				displayPreStartInit(canvas);
-				
-//				preStartStep += 1;
-			} else if (preStartStep == 2) {
-				
+				displayPreStartInit(canvas, 0);
 			}
 			return;
 		}
@@ -88,13 +79,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		model.draw(canvas);
 	}
 	
-	public void drawAtBeginning() {
-		Canvas c = holder.lockCanvas();
-		displayPreStartInit(c);
-		holder.unlockCanvasAndPost(c);
-	}
-	
-	private void displayPreStartInit(Canvas c) {
+	private void displayPreStartInit(Canvas c, int xOffset) {
 		Rect surfaceFrame = holder.getSurfaceFrame();
 		float exactCenterX = surfaceFrame.exactCenterX();
 		float exactCenterY = surfaceFrame.exactCenterY();
@@ -105,17 +90,16 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		c.drawPaint(paint2);
 		
 		
-		paint.setColor(Color.GREEN);
 		paint.setAlpha(100);
+		paint.setColor(Color.GREEN);
 		c.drawRect(model.getLeftScreen(), paint);
 		paint.setColor(Color.YELLOW);
-		paint.setAlpha(100);
 		c.drawRect(model.getRightScreen(), paint);
 		
 		
 		Path path = new Path();
-		path.moveTo(exactCenterX-300, exactCenterY);
-		path.lineTo(exactCenterX+300, exactCenterY);
+		path.moveTo(exactCenterX-300+xOffset, exactCenterY);
+		path.lineTo(exactCenterX+300+xOffset, exactCenterY);
 		
 		paint2.setColor(Color.WHITE);
 		paint2.setTextSize(130);
@@ -125,6 +109,10 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
+		if (levelController != null) {
+			levelController.stopControllers();
+		}
+		
 		model.unregister(this);
 		model = null;
 	}

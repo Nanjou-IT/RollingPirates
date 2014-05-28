@@ -48,6 +48,7 @@ public class Pirate {
 
 	private int lives = 3;
 	private int speed = 3;
+	private volatile boolean secondJump = false;
 
 	public Pirate(float x, float y, Orientation o, Gravity g, int playerCounter) {
 		this.x = x;
@@ -86,6 +87,26 @@ public class Pirate {
 		this.orientation = orientation;
 	}
 	
+	public void setWidth(float width) {
+		this.width = width;
+	}
+	
+	public void setHeight(float height) {
+		this.height = height;
+	}
+	
+	public void setJumpLevel2(boolean b) {
+		this.secondJump = b;
+	}
+	
+	private void speedIncrement() {
+		if (speed > 0) {
+			speed += 1;
+		} else {
+			speed -= 1;
+		}
+	}
+	
 	public static boolean isPirate(char c) {
 		return Character.isDigit(c);
 	}
@@ -122,14 +143,6 @@ public class Pirate {
 		return y;
 	}
 	
-	public void setWidth(float width) {
-		this.width = width;
-	}
-	
-	public void setHeight(float height) {
-		this.height = height;
-	}
-	
 	@Override
 	public String toString() {
 		return "width: " + width + "  height: " + height + "  x: " + x + "  y: " + y;
@@ -163,7 +176,9 @@ public class Pirate {
 		boolean directionRight = false;  // if is not direction == left
 		boolean directionBottom = false; // if is not direction == top
 		boolean collision = false;
-		while (!collision) {
+		while (!collision && !secondJump) { // TODO : add a condition for jump lvl2 (pirate field update)
+			directionRight = false;
+			directionBottom = false;
 			if (orientation == Orientation.Horizontal) {
 				if (speed > 0) {
 					directionRight = true;
@@ -174,11 +189,8 @@ public class Pirate {
 				}
 			}
 			
-			// TODO : Jump 'return' not handled in some cases.. 
 			updatingGravityAndDirection(i, directionRight, directionBottom);
-			
 			pirateRect = new RectF(x, y, x + width, y + height);
-			
 			collision = isCollision(model, collision);
 			
 			try {
@@ -189,8 +201,54 @@ public class Pirate {
 			i += 1;
 			model.updateModel();
 		}
+		
+		if (secondJump) {
+			Log.d("Pirate", "Second jump detected");
+			while (!collision) {
+				Log.d("Pirate", "jumping level 2");
+				directionRight = false;
+				directionBottom = false;
+				if (orientation == Orientation.Horizontal) {
+					if (speed > 0) {
+						directionRight = true;
+					}
+				} else {
+					if (speed > 0) {
+						directionBottom = true;
+					}
+				}
+				
+				// // // //
+				if (gravity == Gravity.TOP) {
+					y += 2;
+				}
+				if (gravity == Gravity.DOWN) {
+					y -= 2;
+				}
+				if (gravity == Gravity.LEFT) {
+					x += 2;
+				}
+				if (gravity == Gravity.RIGHT) {
+					x -= 2;
+				}
+				// // // // 
+				
+				pirateRect = new RectF(x, y, x + width, y + height);
+				collision = isCollision(model, collision);
+				
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e) { }
+				
+				
+				i += 1;
+				model.updateModel();
+			}
+			secondJump = false;
+			speedIncrement();
+		}
 	}
-
+	
 	private void updatingGravityAndDirection(int i, boolean directionRight,
 			boolean directionBottom) {
 		if (gravity == Gravity.TOP) {
@@ -328,7 +386,13 @@ public class Pirate {
 		return collision;
 	}
 	
-	public void move(GamePlateModel model) {
+	/**
+	 * Allow a pirate to move around the arena. Note: the pirate can loose
+	 * 	a live.
+	 * @param model
+	 * @return current lives of the pirate
+	 */
+	public int move(GamePlateModel model) {
 		boolean isObstacle = false;
 		
 		RectF projectedPirate;
@@ -356,7 +420,7 @@ public class Pirate {
 				// Collision
 				if (Math.abs(pirate.getSpeed()) > Math.abs(speed)) {
 					lives -= 1;
-					startingPoint();
+					goToStartingPoint();
 					break;
 				}
 				isObstacle = true;
@@ -400,16 +464,19 @@ public class Pirate {
 			y += speed;
 			pirateRect = new RectF(x, y, x + width, y + height);
 			model.updateModel();
-			return;
+			
+			return lives;
 		}
 		
 		Log.d("Pirate", "Orientation HORIZONTAL");
 		x += speed;
 		pirateRect = new RectF(x, y, x + width, y + height);
 		model.updateModel();
+		
+		return lives;
 	}
 
-	private void startingPoint() {
+	private void goToStartingPoint() {
 		x = startingPoint.x;
 		y = startingPoint.y;
 		orientation = startingOrientation;
@@ -444,13 +511,12 @@ public class Pirate {
 						x -= width/2;
 					}
 				} else {
-				
-				if (gravity == Gravity.TOP) {
-					y -= height;
-				}
-				if (gravity == Gravity.DOWN) {
-					y += height;
-				}
+					if (gravity == Gravity.TOP) {
+						y -= height/2;
+					}
+					if (gravity == Gravity.DOWN) {
+						y += height/2;
+					}
 				}
 			}
 			
@@ -462,13 +528,12 @@ public class Pirate {
 						y -= height/2;
 					}
 				} else {
-				
-				if (gravity == Gravity.LEFT) {
-					x -= width;
-				}
-				if (gravity == Gravity.RIGHT) {
-					x += width;
-				}
+					if (gravity == Gravity.LEFT) {
+						x -= width/2;
+					}
+					if (gravity == Gravity.RIGHT) {
+						x += width/2;
+					}
 				}
 			}
 			
@@ -486,4 +551,13 @@ public class Pirate {
 		}
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Pirate)) {
+			return false;
+		}
+
+		Pirate p = (Pirate)o;
+		return p.playerCounter == playerCounter; 
+	}
 }

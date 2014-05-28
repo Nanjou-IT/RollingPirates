@@ -12,20 +12,32 @@ public class FightingPirate implements Runnable {
 
 	private final GamePlateModel model;
 	private final Pirate pirate;
-	private boolean isJumping = false;
+	private volatile boolean isJumping = false;
 	private final long FPS = 50;
-	
-	public FightingPirate(GamePlateModel model, Pirate pirate) {
+	private final LevelController levelController;
+	private boolean run;
+
+	public FightingPirate(GamePlateModel model, Pirate pirate, LevelController levelController) {
 		this.model = model;
 		this.pirate = pirate;
+		this.levelController = levelController;
+		this.run = true;
 	}
 	
 	public int getPirateId() {
 		return pirate.getPlayerId();
 	}
 	
-	public void setJumping(boolean isJumping) {
-		this.isJumping = isJumping;
+	public void setJumping(boolean b) {
+		this.isJumping = b;
+	}
+
+	public boolean getJumping() {
+		return isJumping;
+	}
+
+	public void setRunning(boolean b) {
+		this.run = b;
 	}
 	
 	@Override
@@ -34,52 +46,66 @@ public class FightingPirate implements Runnable {
         long startTime;
         long sleepTime;
         
-		while (!Thread.interrupted()) {
-			startTime = System.currentTimeMillis();
+        while (!Thread.interrupted()) {
+        	while (run) {
+        		startTime = System.currentTimeMillis();
 
-			// TODO : At each loop => if no move detected then probably have to fall ! (direction speed)
-			boolean pirateMoved = false;
-			
-			ArrayList<Plate> vPlates = model.getVPlates();
-			int sizeVplates = vPlates.size();
-			for (int i = 0; i < sizeVplates; i+=1) {
-				Plate p = vPlates.get(i);
-				if (p.isConnectedTo(pirate)) {
-					pirate.move(model);
-					pirateMoved = true;
-					break;
-				}
-			}
-			
-			ArrayList<Plate> hPlates = model.getHPlates();
-			int sizeHplates = hPlates.size();
-			for (int i = 0; i < sizeHplates; i+=1) {
-				Plate p = hPlates.get(i);
-				if (p.isConnectedTo(pirate)) {
-					pirate.move(model);
-					pirateMoved = true;
-					break;
-				}
-			}
-			
-			if (this.isJumping) {
-				Log.d("FightingPirate", "WOOOOOW : I have to jump ??!!!!!  -- from :" + Thread.currentThread().getName());
-				pirate.jump(model);
-				this.isJumping = false;
-			}
+        		
+        		// TODO : At each loop => if no move detected then probably have to fall ! (direction speed)
+    			boolean pirateMoved = false;
+    			
+    			
+    			ArrayList<Plate> vPlates = model.getVPlates();
+    			int sizeVplates = vPlates.size();
+    			for (int i = 0; i < sizeVplates; i+=1) {
+    				Plate p = vPlates.get(i);
 
-			if (!pirateMoved) {
-				pirate.fall(model);
-			}
+    				if (p.isConnectedTo(pirate)) {
+    					int lives = pirate.move(model);
+    					pirateMoved = true;
+    					if (lives == 0) {
+    						levelController.stopGame(pirate.getPlayerId());
+    					}
+    					break;
+    				}
+    			}
 
-			sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
-			try {
-				if (sleepTime > 0) {
-					Thread.sleep(sleepTime);
-				} else {
-					Thread.sleep(10);
-				}
-			} catch (Exception e) {}
+    			ArrayList<Plate> hPlates = model.getHPlates();
+    			int sizeHplates = hPlates.size();
+    			for (int i = 0; i < sizeHplates; i+=1) {
+    				Plate p = hPlates.get(i);
+
+    				if (p.isConnectedTo(pirate)) {
+    					int lives = pirate.move(model);
+    					pirateMoved = true;
+    					if (lives == 0) {
+    						levelController.stopGame(pirate.getPlayerId());
+    					}
+    					break;
+    				}
+        		}
+
+//        		// A pirate have to jump
+        		if (this.isJumping) {
+        			Log.d("FightingPirate", "WOOOOOW : I have to jump ??!!!!!  -- from :" + Thread.currentThread().getName());
+    				pirate.jump(model);
+    				this.isJumping = false;
+        		}
+        		
+        		if (!pirateMoved) {
+    				pirate.fall(model);
+    			}
+
+        		
+        		sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
+        		try {
+        			if (sleepTime > 0) {
+        				Thread.sleep(sleepTime);
+        			} else {
+        				Thread.sleep(10);
+        			}
+        		} catch (Exception e) {}
+        	}
 		}
 	}
 }

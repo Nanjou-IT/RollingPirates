@@ -6,6 +6,7 @@ import java.util.Arrays;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.util.Log;
+import fr.upem.android.project.rollingpirates.R;
 import fr.upem.android.project.rollingpirates.view.LevelView;
 
 public class GamePlateModel {
@@ -104,7 +105,7 @@ public class GamePlateModel {
 		
 		for (int i = 0; i < players.size(); i+=1) {
 			Pirate otherPirate = players.get(i);
-			if (otherPirate.getPlayerId() != pirate.getPlayerId()) {
+			if (!otherPirate.equals(pirate)) {
 				pirates.add(otherPirate);
 			}
 		}
@@ -119,7 +120,7 @@ public class GamePlateModel {
 		return leftScreen;
 	}
 	
-	public int getSurfaceheight() {
+	public int getSurfaceHeight() {
 		return surfaceheight;
 	}
 	

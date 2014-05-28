@@ -2,15 +2,33 @@ package fr.upem.android.project.rollingpirates.controller;
 
 import java.util.ArrayList;
 
-import fr.upem.android.project.rollingpirates.model.GamePlateModel;
-import fr.upem.android.project.rollingpirates.model.Pirate;
-import fr.upem.android.project.rollingpirates.view.LevelView;
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Point;
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Toast;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
+import android.widget.Button;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+import fr.upem.android.project.rollingpirates.LoadLevelActivity;
+import fr.upem.android.project.rollingpirates.MainActivity;
+import fr.upem.android.project.rollingpirates.R;
+import fr.upem.android.project.rollingpirates.model.GamePlateModel;
+import fr.upem.android.project.rollingpirates.model.Pirate;
+import fr.upem.android.project.rollingpirates.view.LevelView;
 
 public class LevelController {
 	
@@ -30,7 +48,7 @@ public class LevelController {
 		this.fightingPirates = new FightingPirate[pirates.size()];
 		
 		for (int i = 0; i < pirates.size(); i+=1) {
-			fightingPirates[i] = new FightingPirate(model, pirates.get(i));
+			fightingPirates[i] = new FightingPirate(model, pirates.get(i), this);
 		}
 		
 		this.fightingPiratesWorkers = new Thread[fightingPirates.length]; 
@@ -38,10 +56,16 @@ public class LevelController {
 			fightingPiratesWorkers[i] = new Thread(fightingPirates[i]);
 		}
 	}
-	
-	public void setOnClickListener(OnClickListener l) {
-		Toast.makeText(levelView.getContext(), "MAIS LOL CLICK", Toast.LENGTH_LONG).show();
-	}
+
+	public static OnClickListener onClickListener() {
+		return new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Log.d("Controller", "HUHU click Handled ! ");
+			}
+		};
+	}	
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		if (!gameStarted) {
@@ -107,10 +131,14 @@ public class LevelController {
 							for (int i = 0; i < fightingPirates.length; i+=1) {
 								int pirateId = fightingPirates[i].getPirateId();
 								if (pirateId == Pirate.PLAYER_ONE) {
-									fightingPirates[i].setJumping(true);
+									if (fightingPirates[i].getJumping()) {
+										pirate1.setJumpLevel2(true);
+									} else {
+										fightingPirates[i].setJumping(true);
+									}
+//									pirate1.setJumpLevel2(false);
 								}
 							}
-//							pirate1.jump(model);
 						}
 					}
 				}
@@ -143,10 +171,13 @@ public class LevelController {
 							for (int i = 0; i < fightingPirates.length; i+=1) {
 								int pirateId = fightingPirates[i].getPirateId();
 								if (pirateId == Pirate.PLAYER_TWO) {
-									fightingPirates[i].setJumping(true);
+									if (fightingPirates[i].getJumping()) {
+										pirate2.setJumpLevel2(true);
+									} else {
+										fightingPirates[i].setJumping(true);
+									}
 								}
 							}
-//							pirate2.jump(model);
 						}
 					}
 				}
@@ -178,7 +209,116 @@ public class LevelController {
 		}
 	}
 	
+	public void stopControllers() {
+		Log.d("Controller", "Stopping controllers");
+		// Stop controller Threads which modify the model
+		for (int i = 0; i < fightingPirates.length; i+=1) {
+			fightingPirates[i].setRunning(false);
+			fightingPiratesWorkers[i].interrupt();
+		}
+	}
+	
 	public boolean getGameStatus() {
 		return gameStarted;
+	}
+
+	public void stopGame(final int pirateLooserId) {
+		stopControllers();
+		
+		
+		((Activity)levelView.getContext()).runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				final Animation fadeIn = new AlphaAnimation(0.2f, 1);
+				fadeIn.setInterpolator(new DecelerateInterpolator()); //add this
+				fadeIn.setDuration(3000);
+
+				Animation fadeOut = new AlphaAnimation(1, 0.2f);
+				fadeOut.setInterpolator(new AccelerateInterpolator()); //and this
+				fadeOut.setDuration(2000);
+				
+				AnimationSet animation = new AnimationSet(false); //change to false
+				animation.addAnimation(fadeOut);
+				
+				levelView.startAnimation(animation);
+				
+				fadeOut.setAnimationListener(new AnimationListener() {
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						levelView.startAnimation(fadeIn);
+					}
+
+					@Override
+					public void onAnimationStart(Animation animation) {	}
+
+					@Override
+					public void onAnimationRepeat(Animation animation) { }
+				});
+				
+				fadeIn.setAnimationListener(new AnimationListener() {
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						
+					}
+
+					@Override
+					public void onAnimationStart(Animation animation) {
+						Log.d("Controller", "Annimation start !");
+						LayoutInflater layoutInflater = LayoutInflater.from(levelView.getContext()); 
+						View popupView = layoutInflater.inflate(R.layout.popup, null);  
+						
+						TextView winnerText = (TextView) popupView.findViewById(R.id.textCongratulation);
+						
+						int pirateWinner = 1;
+						if (pirateLooserId == Pirate.PLAYER_ONE) {
+							pirateWinner = 2;
+						}
+						winnerText.setText("Congratz Player "+ pirateWinner +" won !");
+						
+			            final PopupWindow popupWindow = new PopupWindow(popupView, model.getSurfaceWidth()/2, model.getSurfaceHeight()/3);  
+			            
+			            
+			            Log.d("Controller", "Show popup dimension :  width;" + popupWindow.getWidth()+ " height:" + popupWindow.getHeight());
+			            
+			            int xpos = model.getSurfaceWidth()/2 - popupWindow.getWidth()/2;
+			            int ypos = -(model.getSurfaceHeight()/2 + popupWindow.getHeight()/2);
+			            Log.d("Controller", "Show popup at x: " + xpos + " y:" + ypos);
+			            
+			            
+			            Button btnRestart = (Button)popupView.findViewById(R.id.restartButton);
+			            btnRestart.setOnClickListener(new OnClickListener() {
+							
+							@Override
+							public void onClick(View v) {
+								popupWindow.dismiss();
+								Intent i = new Intent(levelView.getContext().getApplicationContext() ,LoadLevelActivity.class);
+								((Activity)levelView.getContext()).finish();
+								levelView.getContext().startActivity(i);
+							}
+						});
+			            
+			            Button btnMenu = (Button)popupView.findViewById(R.id.backMainMenuButton);
+			            btnMenu.setOnClickListener(new OnClickListener() {
+							
+							@Override
+							public void onClick(View v) {
+								popupWindow.dismiss();
+								// TODO : Quit properly
+								Intent i = new Intent(levelView.getContext().getApplicationContext() ,MainActivity.class);
+								((Activity)levelView.getContext()).finish();
+								levelView.getContext().startActivity(i);
+							}
+						});
+			            
+			            
+			            popupWindow.showAsDropDown(levelView, xpos, ypos);
+					}
+
+					@Override
+					public void onAnimationRepeat(Animation animation) { }
+				});
+			}
+		});
 	}
 }
