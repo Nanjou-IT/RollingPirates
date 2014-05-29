@@ -3,37 +3,109 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/thelayout"
-    android:orientation="vertical" >
-  
-    <TextView
-        android:id="@+id/sound"
-        style="@style/MenuFont"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/sound" />
-    
-    <TextView
-        android:id="@+id/effects"
-        style="@style/MenuFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/effect" />
-     <TextView
-        android:id="@+id/music"
-        style="@style/MenuFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/music" />
-      <TextView
-        android:id="@+id/vibrate"
-        style="@style/MenuFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/vibrate" />
+    android:orientation="vertical"
+    android:background="@drawable/bg_tile" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/level"
+            style="@style/MenuFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/level"
+            android:layout_margin="20dp" />
+
+        <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="142dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/sound"
+            style="@style/MenuFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="@string/sound" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/effects"
+            style="@style/MenuFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/effect"
+            android:layout_margin="20dp" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/music"
+            style="@style/MenuFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/music"
+            android:layout_margin="20dp" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton"
+            />
+
+    </LinearLayout>
+
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content" >
+
+         <TextView
+             android:id="@+id/vibrate"
+             style="@style/MenuFont"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/vibrate"
+             android:layout_margin="20dp" />
+
+         <ToggleButton
+             android:id="@+id/toggleButton4"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="ToggleButton" />
+
+     </LinearLayout>
     
 
 </LinearLayout>

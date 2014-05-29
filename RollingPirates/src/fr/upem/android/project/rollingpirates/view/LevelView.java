@@ -12,13 +12,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.Toast;
 import fr.upem.android.project.rollingpirates.controller.LevelController;
 import fr.upem.android.project.rollingpirates.model.GamePlateModel;
-import fr.upem.android.project.rollingpirates.model.Obstacle;
 import fr.upem.android.project.rollingpirates.model.Pirate;
-import fr.upem.android.project.rollingpirates.model.Plate;
 
 public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -75,7 +71,7 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		if (!levelController.getGameStatus()) {
 			if (preStartStep == 1) {
 				canvas.drawARGB(255, 255, 255, 255);
-		    	model.draw(canvas);
+		    	model.draw(canvas,getContext(),model);
 				displayPreStartInit(canvas);
 				
 //				preStartStep += 1;
@@ -84,8 +80,8 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 			}
 			return;
 		}
-		canvas.drawARGB(255, 255, 255, 255);
-		model.draw(canvas);
+		canvas.drawARGB(255, 253, 249, 240);
+		model.draw(canvas,getContext(),model);
 	}
 	
 	public void drawAtBeginning() {
