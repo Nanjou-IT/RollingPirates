@@ -18,6 +18,9 @@ public class LoadLevelActivity extends Activity {
         
         
         int gameLevel = getIntent().getIntExtra("level", 0);
+        if (gameLevel > 0) {
+        	gameLevel -= 1;
+        }
         
         AssetManager assets = getAssets();
         String[] levelList = null;
@@ -28,6 +31,7 @@ public class LoadLevelActivity extends Activity {
 		}
 
         if (levelList != null && levelList.length != 0) {
+        	
         	if (levelList.length < gameLevel) {
         		gameLevel = levelList.length-1; // No more levels, select the last one
         	}

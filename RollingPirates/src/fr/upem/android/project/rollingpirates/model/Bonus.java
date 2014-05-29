@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
-import android.util.Log;
 import fr.upem.android.project.rollingpirates.R;
 
 public class Bonus {
@@ -65,7 +64,6 @@ public class Bonus {
 	
 	public static boolean isBonus(char c) {
 		if (c == Bonuses.LIFE.getCharBonus()) {
-			Log.d("Bonus", "IS A BONUS");
 			return true;
 		}
 		
@@ -106,12 +104,9 @@ public class Bonus {
 		for (int j = 0; j < sizeHplates; j+=1) {
 			Plate p = hPlates.get(j);
 			if (bonusRect.intersect(p.getPlateRect())) {
-				Log.d("Pirate", "CONNECTED HORIZONTAL");
-				
-				Log.d("Pirate", "Pirate.Bottom > Plate.Bottom ?   " + bonusRect.bottom  + ">" + p.getPlateRect().bottom); 
-				if ((y+height) < p.getPlateRect().bottom) { // from top
+
+				if ((y + height) < p.getPlateRect().bottom) { // from top
 					y = p.getPlateRect().top - height;
-					Log.d("Pirate", "C1 : YES");
 					bonusRect = new RectF(x, y, x + width, y + height);
 				}
 				
