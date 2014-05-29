@@ -6,7 +6,6 @@ import java.util.Arrays;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.util.Log;
-import fr.upem.android.project.rollingpirates.R;
 import fr.upem.android.project.rollingpirates.model.Bonus.Bonuses;
 import fr.upem.android.project.rollingpirates.view.LevelView;
 
@@ -19,9 +18,6 @@ public class GamePlateModel {
 	
 	private final float CELL_WIDTH;
 	private final float CELL_HEIGHT;
-	
-	private final int widthRatio; 
-	private final int heightRatio;
 	
 	private final ArrayList<Plate> hplates;
 	private final ArrayList<Plate> vplates;
@@ -45,14 +41,14 @@ public class GamePlateModel {
 		float accurateWidthRatio  = cellHNumber / (float)ROW;   		// 64 / 28 = 2.28571428  
 		float accurateHeightRatio = cellVNumber / (float)LINE;  		// 29.5 / 9 = 3.27777777
 		
-		widthRatio = (int) accurateWidthRatio;
-		heightRatio = (int) accurateHeightRatio;
+		int widthRatio = (int) accurateWidthRatio;
+		int heightRatio = (int) accurateHeightRatio;
 		
 		// Modifications for getting an accurate width / height
 		float d = (accurateHeightRatio - (float) heightRatio) / heightRatio;
-		CELL_HEIGHT = cellWidth + cellWidth * d;
+		CELL_HEIGHT = (cellWidth + cellWidth * d) * heightRatio;
 		d = (accurateWidthRatio - (float) widthRatio) / widthRatio;
-		CELL_WIDTH = cellHeight + cellHeight * d;
+		CELL_WIDTH = (cellHeight + cellHeight * d) * widthRatio;
 		
 		hplates = new ArrayList<Plate>();
 		vplates = new ArrayList<Plate>();
@@ -183,8 +179,8 @@ public class GamePlateModel {
 	private static ArrayList<Plate> getHorizontalPlates(GamePlateModel game, char[][] level) {
 		ArrayList<Plate> list = new ArrayList<Plate>();
 		
-		float CELL_HEIGHT = game.CELL_HEIGHT * game.heightRatio;
-		float CELL_WIDTH = game.CELL_WIDTH * game.widthRatio;
+		float CELL_HEIGHT = game.CELL_HEIGHT;
+		float CELL_WIDTH = game.CELL_WIDTH;
 		
 		float x = 0;
 		float y = 0;
@@ -264,8 +260,8 @@ public class GamePlateModel {
 	private static ArrayList<Plate> getVerticalPlates(GamePlateModel game, char[][] level) {
 		ArrayList<Plate> list = new ArrayList<Plate>();
 		
-		float CELL_HEIGHT = game.CELL_HEIGHT * game.heightRatio;
-		float CELL_WIDTH = game.CELL_WIDTH * game.widthRatio;
+		float CELL_HEIGHT = game.CELL_HEIGHT;
+		float CELL_WIDTH = game.CELL_WIDTH;
 		
 		float x = 0;
 		float y = CELL_HEIGHT;
@@ -369,8 +365,8 @@ public class GamePlateModel {
 		ArrayList<Bonus> bonusList = new ArrayList<Bonus>();
 		
 		// Modifications for getting an accurate width / height
-		float CELL_HEIGHT = game.CELL_HEIGHT * game.heightRatio;
-		float CELL_WIDTH = game.CELL_WIDTH * game.widthRatio;
+		float CELL_HEIGHT = game.CELL_HEIGHT;
+		float CELL_WIDTH = game.CELL_WIDTH;
 		
 		float x = 0;
 		float y = 0;
@@ -408,8 +404,8 @@ public class GamePlateModel {
 		ArrayList<Pirate> piratesList = new ArrayList<Pirate>();
 		
 		// Modifications for getting an accurate width / height
-		float CELL_HEIGHT = game.CELL_HEIGHT * game.heightRatio;
-		float CELL_WIDTH = game.CELL_WIDTH * game.widthRatio;
+		float CELL_HEIGHT = game.CELL_HEIGHT;
+		float CELL_WIDTH = game.CELL_WIDTH;
 		
 		float x = 0;
 		float y = 0;
