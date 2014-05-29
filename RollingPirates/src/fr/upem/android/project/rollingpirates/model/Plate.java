@@ -21,6 +21,7 @@ public class Plate {
 	private final float minY;
 	private final float maxY;
 	private final Paint paint;
+	
 	public Plate(ArrayList<Obstacle> obstacles, Gravity gravity, int lineRowNumber, Orientation orientation) {
 		this.obstacles = obstacles;
 		g = gravity;

@@ -17,7 +17,7 @@ public class LoadLevelActivity extends Activity {
         super.onCreate(savedInstanceState);
         
         // TODO : Receive the game level as an integer !
-        int gameLevel = 2;
+        int gameLevel = 3;
         
         AssetManager assets = getAssets();
         String[] levelList = null;

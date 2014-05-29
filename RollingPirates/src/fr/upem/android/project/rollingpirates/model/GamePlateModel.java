@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.util.Log;
 import fr.upem.android.project.rollingpirates.R;
+import fr.upem.android.project.rollingpirates.model.Bonus.Bonuses;
 import fr.upem.android.project.rollingpirates.view.LevelView;
 
 public class GamePlateModel {
@@ -70,6 +71,7 @@ public class GamePlateModel {
 		game.hplates.addAll(getHorizontalPlates(game, level));
 		game.vplates.addAll(getVerticalPlates(game, level));
 		game.players.addAll(getPirates(game, level));
+		game.bonuses.addAll(getBonuses(game, level));
 		
 		return game;
 	}
@@ -84,6 +86,10 @@ public class GamePlateModel {
 	
 	public ArrayList<Pirate> getPirates() {
 		return players;
+	}
+	
+	public ArrayList<Bonus> getBonuses() {
+		return bonuses;
 	}
 	
 	/**
@@ -162,6 +168,11 @@ public class GamePlateModel {
 		int sizePirates = players.size();
 		for (int i = 0; i < sizePirates; i+=1) {
 			players.get(i).draw(canvas);
+		}
+		
+		int sizeBonuses = bonuses.size();
+		for (int i = 0; i < sizeBonuses; i+=1) {
+			bonuses.get(i).draw(canvas);
 		}
 	}
 	
@@ -352,8 +363,10 @@ public class GamePlateModel {
 		}
 	}
 	
-	private static ArrayList<Pirate> getPirates(GamePlateModel game, char[][] level) {
-		ArrayList<Pirate> list = new ArrayList<Pirate>();
+	
+	
+	private static ArrayList<Bonus> getBonuses(GamePlateModel game, char[][] level) {
+		ArrayList<Bonus> bonusList = new ArrayList<Bonus>();
 		
 		// Modifications for getting an accurate width / height
 		float CELL_HEIGHT = game.CELL_HEIGHT * game.heightRatio;
@@ -362,13 +375,52 @@ public class GamePlateModel {
 		float x = 0;
 		float y = 0;
 		for (int line = 0; line < LINE; line += 1) { // 15
-			getLinePirates(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, line, list);
+			getLineBonuses(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, line, bonusList);
 			
 			x = 0;
 			y += CELL_HEIGHT; // New line : increment from ratio grid / screen
 		}
 		
-		return list;
+		return bonusList;
+	}
+
+	private static void getLineBonuses(GamePlateModel game, char[][] level,
+			float CELL_HEIGHT, float CELL_WIDTH, float x, float y, int line,
+			ArrayList<Bonus> bonuses) {
+		
+		for (int row = 0; row < ROW; row += 1) { // 28
+			if (Bonus.isBonus(level[line][row])) {
+				
+				Bonuses bonus = Bonus.getBonus(level[line][row]);
+				
+				bonuses.add(new Bonus(CELL_WIDTH, CELL_HEIGHT, x, y, bonus));
+				x += CELL_WIDTH;
+			} else {
+				x += CELL_WIDTH;
+			}
+		}
+	}
+	
+	
+	
+	
+	private static ArrayList<Pirate> getPirates(GamePlateModel game, char[][] level) {
+		ArrayList<Pirate> piratesList = new ArrayList<Pirate>();
+		
+		// Modifications for getting an accurate width / height
+		float CELL_HEIGHT = game.CELL_HEIGHT * game.heightRatio;
+		float CELL_WIDTH = game.CELL_WIDTH * game.widthRatio;
+		
+		float x = 0;
+		float y = 0;
+		for (int line = 0; line < LINE; line += 1) { // 15
+			getLinePirates(game, level, CELL_HEIGHT, CELL_WIDTH, x, y, line, piratesList);
+			
+			x = 0;
+			y += CELL_HEIGHT; // New line : increment from ratio grid / screen
+		}
+		
+		return piratesList;
 	}
 
 	private static void getLinePirates(GamePlateModel game, char[][] level,
@@ -389,7 +441,6 @@ public class GamePlateModel {
 		}
 	}
 	
-
 	private static Gravity getPirateGravity(Orientation orientation, char[][] level, int line, int row) {
 		Gravity gravity = Gravity.DOWN; // default gravity
 		
@@ -555,7 +606,9 @@ public class GamePlateModel {
 		for (int i = 1; i < newGrid[newGrid_line].length-1; i+=1) {
 			char c = newGrid[newGrid_line][i];
 			if (Pirate.isPirate(c) || Bonus.isBonus(c)) {
+				
 				if (newGrid[newGrid_line-1][i] == ' ' && newGrid[newGrid_line][i+1] == ' ' && newGrid[newGrid_line][i-1] == ' ') {
+					
 					newGrid[newGrid_line-1][i] = c;
 					newGrid[newGrid_line][i] = ' ';
 				}

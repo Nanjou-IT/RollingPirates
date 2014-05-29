@@ -3,6 +3,7 @@ package fr.upem.android.project.rollingpirates.controller;
 import java.util.ArrayList;
 
 import android.util.Log;
+import fr.upem.android.project.rollingpirates.model.Bonus;
 import fr.upem.android.project.rollingpirates.model.GamePlateModel;
 import fr.upem.android.project.rollingpirates.model.Obstacle;
 import fr.upem.android.project.rollingpirates.model.Pirate;
@@ -45,6 +46,13 @@ public class FightingPirate implements Runnable {
 		long ticksPS = 1000 / FPS; // 10
         long startTime;
         long sleepTime;
+        
+        ArrayList<Bonus> bonuses = model.getBonuses();
+        int sizeBonuses = bonuses.size();
+		for (int i = 0; i < sizeBonuses; i+=1) {
+			Bonus b = bonuses.get(i);
+			b.fall(model);
+		}
         
         while (!Thread.interrupted()) {
         	while (run) {

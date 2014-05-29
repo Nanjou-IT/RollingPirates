@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
 import fr.upem.android.project.rollingpirates.controller.LevelController;
+import fr.upem.android.project.rollingpirates.model.Bonus;
 import fr.upem.android.project.rollingpirates.model.GamePlateModel;
 import fr.upem.android.project.rollingpirates.model.Obstacle;
 import fr.upem.android.project.rollingpirates.model.Pirate;
@@ -59,6 +61,12 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 			Pirate pirate = pirates.get(i);
 			pirate.setSkin(getContext());
 		}
+		
+		ArrayList<Bonus> bonuses = model.getBonuses();
+		for (int i = 0; i < bonuses.size(); i+=1) {
+			Bonus bonus = bonuses.get(i);
+			bonus.setSkin(getContext());
+		}
 	}
 	
 	
@@ -68,11 +76,9 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		Log.d("LevelView", "onDraw() from LevelView");
 		
 		if (!levelController.getGameStatus()) {
-			if (preStartStep == 1) {
-				canvas.drawARGB(255, 255, 255, 255);
-		    	model.draw(canvas);
-				displayPreStartInit(canvas, 0);
-			}
+			canvas.drawARGB(255, 255, 255, 255);
+			model.draw(canvas);
+			displayPreStartInit(canvas, 0);
 			return;
 		}
 		canvas.drawARGB(255, 255, 255, 255);
@@ -90,10 +96,11 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 		c.drawPaint(paint2);
 		
 		
-		paint.setAlpha(100);
 		paint.setColor(Color.GREEN);
+		paint.setAlpha(100);
 		c.drawRect(model.getLeftScreen(), paint);
 		paint.setColor(Color.YELLOW);
+		paint.setAlpha(100);
 		c.drawRect(model.getRightScreen(), paint);
 		
 		

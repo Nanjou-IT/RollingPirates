@@ -71,7 +71,7 @@ public class Pirate {
 	public void setSkin(Context c) {
 		if (playerCounter == PLAYER_ONE) {
 			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.bad2);
-		} else if (playerCounter == PLAYER_TWO) {
+		} else {
 			bmp = BitmapFactory.decodeResource(c.getResources(), R.drawable.bad3);
 		}
 		 
@@ -420,6 +420,20 @@ public class Pirate {
 					break;
 				}
 				isObstacle = true;
+				break;
+			}
+		}
+		
+		ArrayList<Bonus> bonuses = model.getBonuses();
+		for (int i = 0; i < bonuses.size(); i+=1) {
+			Bonus bonus = bonuses.get(i);
+			
+			Log.d("PIRATE", "Bonus Searching Collision");
+			if (pirateRect.intersect(bonus.getBonusRect())) {
+				// Collision
+				Log.d("PIRATE", "Bonus Collision DETECTED");
+				lives += 1;
+				bonus.delete(model);
 				break;
 			}
 		}
