@@ -3,6 +3,7 @@ package fr.upem.android.project.rollingpirates;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 public class MainActivity extends Activity {
@@ -10,6 +11,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+          
         Intent i = getIntent();
         if (i.getStringExtra("selectedItem") == null) {
         	FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -26,8 +28,13 @@ public class MainActivity extends Activity {
         	if(i.getStringExtra("selectedItem").equals("Help")){
         		// TODO
         	}
-        	if(i.getStringExtra("selectedItem").equals("About")){
-        		// TODO
+        	
+        	if (i.getStringExtra("selectedItem").equals("New Game")) {
+        		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        		MenuFragment levelPicker = MenuFragment.createLevelPicker();
+        		transaction.replace(android.R.id.content, levelPicker);
+        		transaction.commit();
         	}
         }
     }

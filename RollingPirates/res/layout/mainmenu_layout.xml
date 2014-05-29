@@ -3,14 +3,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/thelayout"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@drawable/bg_tile" >
   
+     <TextView
+        style="@style/Title"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40sp"
+        android:layout_marginBottom="40sp"
+        android:text="@string/app_name" />
     <TextView
         android:id="@+id/begin"
         style="@style/MenuFont"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:text="@string/begin" />
     
     <TextView
@@ -19,6 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_margin="10dp"
         android:text="@string/settings" />
 	
     <TextView
@@ -27,15 +38,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_margin="10dp"
         android:text="@string/help" />
-    
-    <TextView
-        android:id="@+id/about"
-        style="@style/MenuFont"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/about" />
 
     <TextView
         android:id="@+id/exit"
@@ -43,6 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_margin="10dp"
         android:text="@string/exit" />
 
 </LinearLayout>

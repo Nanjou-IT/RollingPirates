@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+<ListPreference
+    android:key ="level_select"
+    android:title="Level"
+    android:defaultValue="0"
+    android:entries="@array/levelList"
+    android:entryValues="@array/levelListValues"/>
+
+</PreferenceScreen>

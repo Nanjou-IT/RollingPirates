@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array 	name="levelList">
+	    <item name="0">Easy</item>
+	    <item name="1">Hard</item>
+	</string-array>
+	<string-array 	name="levelListValues">
+	    <item name="0">0</item>
+	    <item name="1">1</item>
+	</string-array>        
+</resources>

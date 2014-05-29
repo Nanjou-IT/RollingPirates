@@ -3,6 +3,7 @@ package fr.upem.android.project.rollingpirates.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.util.Log;
@@ -150,15 +151,15 @@ public class GamePlateModel {
 		modelChanged();
 	}
 	
-	public void draw(Canvas canvas) {
+	public void draw(Canvas canvas,Context c,GamePlateModel model) {
 		int sizeHplates = hplates.size();
 		for (int i = 0; i < sizeHplates; i+=1) {
-			hplates.get(i).draw(canvas);
+			hplates.get(i).draw(canvas,c,model);
 		}
 		
 		int sizeVplates = vplates.size();
 		for (int i = 0; i < sizeVplates; i+=1) {
-			vplates.get(i).draw(canvas);
+			vplates.get(i).draw(canvas,c,model );
 		}
 		
 		int sizePirates = players.size();

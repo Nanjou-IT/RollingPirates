@@ -9,15 +9,15 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class LoadLevelActivity extends Activity {
-	
+
 	private final static String TAG = "LoadLevel";
-	
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // TODO : Receive the game level as an integer !
-        int gameLevel = 3;
+        
+        int gameLevel = getIntent().getIntExtra("level", 0);
         
         AssetManager assets = getAssets();
         String[] levelList = null;
