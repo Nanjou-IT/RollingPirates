@@ -81,7 +81,6 @@ public class Bonus {
 	}
 	
 	public void fall(GamePlateModel model) {
-		int i = 0;
 		
 		boolean collision = false;
 		while (!collision) {
@@ -97,7 +96,6 @@ public class Bonus {
 			} catch (InterruptedException e) { }
 			
 			
-			i += 1;
 			model.updateModel();
 		}
 	}

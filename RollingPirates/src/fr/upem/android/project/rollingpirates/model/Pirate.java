@@ -2,24 +2,16 @@ package fr.upem.android.project.rollingpirates.model;
 
 
 import java.util.ArrayList;
-import java.util.zip.CheckedOutputStream;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.view.SurfaceHolder;
 import fr.upem.android.project.rollingpirates.R;
 
 public class Pirate {
@@ -150,7 +142,6 @@ public class Pirate {
 
 	public void draw(Canvas c) {
 		float srcX = getWidth();
-		float srcY = getHeight();
 		
 		// TODO : Handle this properly
 		Rect src = new Rect((int)srcX, (int)0, (int)srcX + (int)getWidth(), (int)getHeight());
@@ -169,7 +160,6 @@ public class Pirate {
 	}
 	
 	public void jump(GamePlateModel model) {
-		Log.d("Pirate", "JUMP");
 		int i = 0;
 		
 		boolean directionRight = false;  // if is not direction == left
@@ -202,9 +192,7 @@ public class Pirate {
 		}
 		
 		if (secondJump) {
-			Log.d("Pirate", "Second jump detected");
 			while (!collision) {
-				Log.d("Pirate", "jumping level 2");
 				directionRight = false;
 				directionBottom = false;
 				if (orientation == Orientation.Horizontal) {
@@ -217,7 +205,6 @@ public class Pirate {
 					}
 				}
 				
-				// // // // TODO : the famous linear jump ?
 				if (gravity == Gravity.TOP) {
 					y += 2;
 				}
@@ -230,7 +217,6 @@ public class Pirate {
 				if (gravity == Gravity.RIGHT) {
 					x -= 2;
 				}
-				// // // // TODO : the famous linear jump ?
 				
 				pirateRect = new RectF(x, y, x + width, y + height);
 				collision = isCollision(model);
@@ -301,27 +287,22 @@ public class Pirate {
 		for (int j = 0; j < sizeHplates; j+=1) {
 			Plate p = hPlates.get(j);
 			if (pirateRect.intersect(p.getPlateRect())) {
-				Log.d("Pirate", "CONNECTED HORIZONTAL");
 				
-				Log.d("Pirate", "Pirate.Bottom > Plate.Bottom ?   " + pirateRect.bottom  + ">" + p.getPlateRect().bottom); 
 				if ((y+height) < p.getPlateRect().bottom) { // from top
 					y = p.getPlateRect().top - height;
 					
 					gravity = Gravity.DOWN;
 					orientation = Orientation.Horizontal;
-					Log.d("Pirate", "C1 : YES");
 				} else {
 					y = p.getPlateRect().bottom;
 					
 					gravity = Gravity.TOP;
 					orientation = Orientation.Horizontal;
-					Log.d("Pirate", "C2 : NO");
 				}
 				
 				// Setting up connected && out of bounds patch
 				if (x+width >= p.getMaxX()) {
 					x = p.getMaxX() - width;
-					Log.d("Pirate", "HORIZONTAL | RIGHT  : X > bounds");
 					if (speed > 0) {
 						speed *= -1;
 					}
@@ -329,7 +310,6 @@ public class Pirate {
 				
 				if (x <= p.getMinX()) {
 					x = p.getMinX();
-					Log.d("Pirate", "HORIZONTAL | LEFT  : X < bounds");
 					if (speed < 0) {
 						speed *= -1;
 					}
@@ -344,24 +324,19 @@ public class Pirate {
 		for (int j = 0; j < sizeVplates; j+=1) {
 			Plate p = vPlates.get(j);
 			if (pirateRect.intersect(p.getPlateRect())) {
-				Log.d("Pirate", "CONNECTED VERTICAL");
 
-				Log.d("Pirate", "Pirate.Left < Plate.Left ?   " + x + "<" + p.getPlateRect().left);
 				if (x < p.getPlateRect().left) { // from left
 					x = p.getPlateRect().left - width;
 					orientation = Orientation.Vertical;
 					gravity = Gravity.RIGHT;
-					Log.d("Pirate", "C1 : YES");
 				} else {
 					x = p.getPlateRect().right;
 					gravity = Gravity.LEFT;
 					orientation = Orientation.Vertical;
-					Log.d("Pirate", "C2 : NO");
 				}
 				
 				if (y <= p.getMinY()) {
 					y = p.getMinY();
-					Log.d("Pirate", "VERTICAL | TOP  : Y > bounds   speed=" + speed);
 					// change direction
 					if (speed < 0) {
 						speed *= -1;
@@ -370,7 +345,6 @@ public class Pirate {
 				
 				if (y+height >= p.getMaxY()) {
 					y = p.getMaxY() - height;
-					Log.d("Pirate", "VERTICAL | BOTTOM  : Y < bounds");
 					if (speed > 0) {
 						speed *= -1;
 					}
@@ -399,7 +373,6 @@ public class Pirate {
 				projectedPirate = new RectF(x, y, x, y + height);
 			}
 		} else {
-			Log.d("Pirate", "Call to move in vertical !  speed" + speed);
 			if (speed > 0) { // moving to down
 				projectedPirate = new RectF(x, y + height, x + width, y + height);
 			} else { // moving to up
@@ -428,10 +401,8 @@ public class Pirate {
 		for (int i = 0; i < bonuses.size(); i+=1) {
 			Bonus bonus = bonuses.get(i);
 			
-			Log.d("PIRATE", "Bonus Searching Collision");
 			if (pirateRect.intersect(bonus.getBonusRect())) {
 				// Collision
-				Log.d("PIRATE", "Bonus Collision DETECTED");
 				lives += 1;
 				bonus.delete(model);
 				break;
@@ -446,7 +417,6 @@ public class Pirate {
 			
 			if (RectF.intersects(plateRect, projectedPirate)) {
 				isObstacle = true;
-				Log.d("Pirate", "Vertical Obstacle");
 				break;
 			}
 		}
@@ -458,19 +428,16 @@ public class Pirate {
 			
 			if (RectF.intersects(plateRect, projectedPirate)) {
 				isObstacle = true;
-				Log.d("Pirate", "Horizontal Obstacle");
 				break;
 			}
 		}
 		
 		
 		if (isObstacle) {
-			Log.d("Pirate", "Changing direction > " + speed);
 			speed *= -1;
 		}
 		
 		if (orientation == Orientation.Vertical) {
-			Log.d("Pirate", "Orientation VERTICAL");
 			y += speed;
 			pirateRect = new RectF(x, y, x + width, y + height);
 			model.updateModel();
@@ -478,7 +445,6 @@ public class Pirate {
 			return lives;
 		}
 		
-		Log.d("Pirate", "Orientation HORIZONTAL");
 		x += speed;
 		pirateRect = new RectF(x, y, x + width, y + height);
 		model.updateModel();

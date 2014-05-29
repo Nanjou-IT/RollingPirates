@@ -8,8 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -45,7 +43,6 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		Log.d("LevelView", "surfaceCreated()");
 		Rect surfaceFrame = holder.getSurfaceFrame();
 		model = GamePlateModel.init(grid, surfaceFrame.width(), surfaceFrame.height());
 		model.register(this);
@@ -68,7 +65,6 @@ public class LevelView extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		Log.d("LevelView", "onDraw() from LevelView");
 		
 		if (!levelController.getGameStatus()) {
 			if (preStartStep == 1) {

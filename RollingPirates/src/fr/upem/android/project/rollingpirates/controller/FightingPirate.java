@@ -2,10 +2,8 @@ package fr.upem.android.project.rollingpirates.controller;
 
 import java.util.ArrayList;
 
-import android.util.Log;
 import fr.upem.android.project.rollingpirates.model.Bonus;
 import fr.upem.android.project.rollingpirates.model.GamePlateModel;
-import fr.upem.android.project.rollingpirates.model.Obstacle;
 import fr.upem.android.project.rollingpirates.model.Pirate;
 import fr.upem.android.project.rollingpirates.model.Plate;
 
@@ -90,7 +88,6 @@ public class FightingPirate implements Runnable {
 
     			// A pirate have to jump
         		if (this.isJumping) {
-        			Log.d("FightingPirate", "WOOOOOW : I have to jump ??!!!!!  -- from :" + Thread.currentThread().getName());
     				pirate.jump(model);
     				this.isJumping = false;
         		}
